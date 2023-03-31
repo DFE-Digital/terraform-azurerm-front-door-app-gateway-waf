@@ -27,7 +27,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "group" {
 resource "azurerm_cdn_frontdoor_origin" "origin" {
   for_each = local.origins
 
-  name                           = "${local.resource_prefix}origin${index(local.origins, each.value)}"
+  name                           = "${local.resource_prefix}origin-${each.key}"
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group.id
   enabled                        = true
   certificate_name_check_enabled = true
@@ -46,14 +46,14 @@ resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
 resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
   for_each = local.custom_domains
 
-  name                     = "${local.resource_prefix}custom-domain${index(local.custom_domains, each.value)}"
+  name                     = "${local.resource_prefix}custom-domain-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
   dns_zone_id              = length(each.value.dns_zone_id) ? each.value.dns_zone_id : null
   host_name                = each.value.host_name
 
   tls {
-    certificate_type    = length(each.value.certificate_type) ? each.value.certificate_type : "ManagedCertificate"
-    minimum_tls_version = length(each.value.min_tls_version) ? each.value.min_tls_version : "TLS12"
+    certificate_type    = each.value.certificate_type ? each.value.certificate_type : "ManagedCertificate"
+    minimum_tls_version = each.value.min_tls_version ? each.value.min_tls_version : "TLS12"
   }
 }
 
