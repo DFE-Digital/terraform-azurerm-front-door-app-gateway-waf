@@ -15,7 +15,7 @@ locals {
   health_probe_path                  = var.health_probe_path
   health_probe_request_type          = var.health_probe_request_type
   response_timeout                   = var.response_timeout
-  origin_host_name                   = var.origin_host_name
+  origins                            = var.origins
   custom_domains                     = var.custom_domains
   use_existing_key_vault             = var.use_existing_key_vault
   existing_key_vault_id              = var.existing_key_vault_id

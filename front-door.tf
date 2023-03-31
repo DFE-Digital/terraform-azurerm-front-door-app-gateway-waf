@@ -25,12 +25,14 @@ resource "azurerm_cdn_frontdoor_origin_group" "group" {
 }
 
 resource "azurerm_cdn_frontdoor_origin" "origin" {
-  name                           = "${local.resource_prefix}origin"
+  for_each = local.origins
+
+  name                           = "${local.resource_prefix}origin${each.key}"
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group.id
   enabled                        = true
   certificate_name_check_enabled = true
-  host_name                      = local.origin_host_name
-  origin_host_header             = local.origin_host_name
+  host_name                      = each.value
+  origin_host_header             = each.value
   http_port                      = 80
   https_port                     = 443
 }
@@ -59,7 +61,7 @@ resource "azurerm_cdn_frontdoor_route" "route" {
   name                          = "${local.resource_prefix}route"
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group.id
-  cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.origin.id]
+  cdn_frontdoor_origin_ids      = [for o in azurerm_cdn_frontdoor_origin.origin : o.id]
   cdn_frontdoor_rule_set_ids    = local.ruleset_ids
   enabled                       = true
 

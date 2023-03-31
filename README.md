@@ -82,7 +82,7 @@ module "azurerm_front_door_waf" {
 | <a name="input_host_redirects"></a> [host\_redirects](#input\_host\_redirects) | CDN FrontDoor host redirects `[{ "from" = "example.com", "to" = "www.example.com" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_https_redirect_enabled"></a> [https\_redirect\_enabled](#input\_https\_redirect\_enabled) | Redirect all HTTP traffic to HTTPS | `bool` | `true` | no |
 | <a name="input_monitor_action_group_id"></a> [monitor\_action\_group\_id](#input\_monitor\_action\_group\_id) | Specify the Action Group ID that you want to send the Latency monitor alerts to | `string` | n/a | yes |
-| <a name="input_origin_host_name"></a> [origin\_host\_name](#input\_origin\_host\_name) | A valid Origin host name. This could be a FQDN to a Container App or App Service | `string` | n/a | yes |
+| <a name="input_origins"></a> [origins](#input\_origins) | A list of origin host names | `list(string)` | `[]` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Project name. Will be used along with `environment` as a prefix for all resources. | `string` | n/a | yes |
 | <a name="input_rate_limiting_bypass_ip_list"></a> [rate\_limiting\_bypass\_ip\_list](#input\_rate\_limiting\_bypass\_ip\_list) | List if IP CIDRs to bypass the Rate Limit Policy | `list(string)` | `[]` | no |
 | <a name="input_rate_limiting_duration_in_minutes"></a> [rate\_limiting\_duration\_in\_minutes](#input\_rate\_limiting\_duration\_in\_minutes) | Number of minutes to BLOCK requests that hit the Rate Limit threshold | `number` | `1` | no |

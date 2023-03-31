@@ -78,9 +78,10 @@ variable "response_timeout" {
   default     = 120
 }
 
-variable "origin_host_name" {
-  description = "A valid Origin host name. This could be a FQDN to a Container App or App Service"
-  type        = string
+variable "origins" {
+  description = "A list of origin host names"
+  type        = list(string)
+  default     = []
 }
 
 variable "custom_domains" {
