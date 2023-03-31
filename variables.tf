@@ -108,6 +108,12 @@ variable "existing_key_vault_id" {
   default     = ""
 }
 
+variable "key_vault_allow_ipv4_list" {
+  description = "A list of IPv4 addresses to permit access to the Key Vault that holds the TLS Certificates"
+  type        = list(string)
+  default     = []
+}
+
 variable "certificates" {
   description = "Customer managed certificates (.pfx)"
   type        = map(any)

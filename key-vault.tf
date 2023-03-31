@@ -9,10 +9,14 @@ resource "azurerm_key_vault" "frontdoor" {
   soft_delete_retention_days = 7
   purge_protection_enabled   = true
 
-  network_acls {
-    default_action = "Deny"
-    bypass         = "AzureServices"
-    ip_rules       = []
+  dynamic "network_acls" {
+    for_each = length(local.key_vault_allow_ipv4_list) > 0 ? [0] : []
+
+    content {
+      default_action = "Deny"
+      bypass         = "AzureServices"
+      ip_rules       = local.key_vault_allow_ipv4_list
+    }
   }
 
   access_policy {

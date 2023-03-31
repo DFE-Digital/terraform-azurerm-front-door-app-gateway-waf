@@ -81,6 +81,7 @@ module "azurerm_front_door_waf" {
 | <a name="input_host_add_response_headers"></a> [host\_add\_response\_headers](#input\_host\_add\_response\_headers) | List of response headers to add at the CDN Front Door `[{ "Name" = "Strict-Transport-Security", "value" = "max-age=31536000" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_host_redirects"></a> [host\_redirects](#input\_host\_redirects) | CDN FrontDoor host redirects `[{ "from" = "example.com", "to" = "www.example.com" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_https_redirect_enabled"></a> [https\_redirect\_enabled](#input\_https\_redirect\_enabled) | Redirect all HTTP traffic to HTTPS | `bool` | `true` | no |
+| <a name="input_key_vault_allow_ipv4_list"></a> [key\_vault\_allow\_ipv4\_list](#input\_key\_vault\_allow\_ipv4\_list) | A list of IPv4 addresses to permit access to the Key Vault that holds the TLS Certificates | `list(string)` | `[]` | no |
 | <a name="input_monitor_action_group_id"></a> [monitor\_action\_group\_id](#input\_monitor\_action\_group\_id) | Specify the Action Group ID that you want to send the Latency monitor alerts to | `string` | n/a | yes |
 | <a name="input_origins"></a> [origins](#input\_origins) | A list of origin host names keyed by an identifier | `map(any)` | `{}` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Project name. Will be used along with `environment` as a prefix for all resources. | `string` | n/a | yes |
