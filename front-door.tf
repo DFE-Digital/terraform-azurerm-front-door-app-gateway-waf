@@ -80,7 +80,7 @@ resource "azurerm_cdn_frontdoor_route" "route" {
 resource "azurerm_cdn_frontdoor_custom_domain_association" "custom_domain_association" {
   for_each = local.custom_domains
 
-  cdn_frontdoor_custom_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[each.value].id
+  cdn_frontdoor_custom_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[each.key].id
   cdn_frontdoor_route_ids        = [azurerm_cdn_frontdoor_route.route.id]
 }
 
