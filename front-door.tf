@@ -48,12 +48,12 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
 
   name                     = "${local.resource_prefix}custom-domain-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
-  dns_zone_id              = length(each.value.dns_zone_id) ? each.value.dns_zone_id : null
+  dns_zone_id              = try(each.value.dns_zone_id != "", false) ? each.value.dns_zone_id : null
   host_name                = each.value.host_name
 
   tls {
-    certificate_type    = each.value.certificate_type ? each.value.certificate_type : "ManagedCertificate"
-    minimum_tls_version = each.value.min_tls_version ? each.value.min_tls_version : "TLS12"
+    certificate_type    = try(each.value.certificate_type != "", false) ? each.value.certificate_type : "ManagedCertificate"
+    minimum_tls_version = try(each.value.min_tls_version != "", false) ? each.value.min_tls_version : "TLS12"
   }
 }
 
