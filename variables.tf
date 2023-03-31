@@ -110,8 +110,8 @@ variable "existing_key_vault_id" {
 
 variable "certificates" {
   description = "Customer managed certificates (.pfx)"
-  type        = list(map(string))
-  default     = []
+  type        = map(any)
+  default     = {}
 }
 
 variable "host_redirects" {
