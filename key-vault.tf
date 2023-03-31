@@ -15,30 +15,53 @@ resource "azurerm_key_vault" "frontdoor" {
     ip_rules       = []
   }
 
-  # CDN Front Door Enterprise Application Object ID(e.g. Microsoft.Azure.Cdn)
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azuread_service_principal.frontdoor.object_id
-
-    secret_permissions = [
-      "Get",
-    ]
-  }
-
-  # Terraform Service Principal
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id # <- Object Id of the Service Principal that Terraform is running as
+    object_id = data.azurerm_client_config.current.object_id
 
     certificate_permissions = [
+      "Create",
+      "Delete",
+      "DeleteIssuers",
+      "Get",
+      "GetIssuers",
+      "Import",
+      "List",
+      "ListIssuers",
+      "ManageContacts",
+      "ManageIssuers",
+      "SetIssuers",
+      "Update",
+    ]
+
+    key_permissions = [
+      "Backup",
+      "Create",
+      "Decrypt",
+      "Delete",
+      "Encrypt",
       "Get",
       "Import",
-      "Delete",
-      "Purge"
+      "List",
+      "Purge",
+      "Recover",
+      "Restore",
+      "Sign",
+      "UnwrapKey",
+      "Update",
+      "Verify",
+      "WrapKey",
     ]
 
     secret_permissions = [
+      "Backup",
+      "Delete",
       "Get",
+      "List",
+      "Purge",
+      "Recover",
+      "Restore",
+      "Set",
     ]
   }
 }
