@@ -79,9 +79,9 @@ variable "response_timeout" {
 }
 
 variable "origins" {
-  description = "A list of origin host names"
-  type        = list(string)
-  default     = []
+  description = "A list of origin host names keyed by an identifier"
+  type        = map(any)
+  default     = {}
 }
 
 variable "custom_domains" {
