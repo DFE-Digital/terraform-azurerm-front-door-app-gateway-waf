@@ -1,7 +1,7 @@
 resource "azurerm_key_vault" "frontdoor" {
   count = local.use_existing_key_vault ? 0 : 1
 
-  name                       = "${local.resource_prefix}fdkv"
+  name                       = "${local.resource_prefix}-kv"
   location                   = local.resource_group.location
   resource_group_name        = local.resource_group.name
   tenant_id                  = data.azurerm_client_config.current.tenant_id
