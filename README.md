@@ -3,17 +3,17 @@
 [![Terraform CI](./actions/workflows/continuous-integration-terraform.yml/badge.svg?branch=main)](./actions/workflows/continuous-integration-terraform.yml?branch=main)
 [![GitHub release](./releases)](./releases)
 
-This <module/project> creates and manages <REPLACE WITH MAIN RESOURCE NAMES/URLS>.
+This module creates and manages an Azure Front Door, and Front Door WAF. If you want to use your own TLS Certificates, it can also create and manage a Key Vault, or you can use an existing one.
 
 ## Usage
 
 Example module usage:
 
 ```hcl
-module "<MODULE NAME>" {
-  source  = "github.com/<ORG>/<MODULE NAME>?ref=v<VERSION>"
+module "azurerm_front_door_waf" {
+  source  = "github.com/dfe-digital/terraform-azuerm-front-door-waf?ref=v0.1.0"
 
-  environment = "dev/staging/test/pre-prod/prod/post-prod"
+  environment = "dev"
 }
 ```
 
