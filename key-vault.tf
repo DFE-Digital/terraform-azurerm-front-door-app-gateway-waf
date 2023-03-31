@@ -50,7 +50,7 @@ resource "azurerm_key_vault_certificate" "frontdoor" {
   key_vault_id = local.key_vault_id
 
   certificate {
-    contents = each.value.contents
+    contents = filebase64(abspath(each.value.contents))
     password = each.value.password
   }
 }
