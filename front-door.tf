@@ -27,7 +27,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "group" {
 resource "azurerm_cdn_frontdoor_origin" "origin" {
   for_each = local.origins
 
-  name                           = "${local.resource_prefix}origin${each.key}"
+  name                           = "${local.resource_prefix}origin${index(local.origins, each.value)}"
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group.id
   enabled                        = true
   certificate_name_check_enabled = true

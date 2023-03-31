@@ -86,8 +86,8 @@ variable "origins" {
 
 variable "custom_domains" {
   description = "Azure CDN Front Door custom domains. If they are within the DNS zone (optionally created), the Validation TXT records and ALIAS/CNAME records will be created"
-  type        = list(string)
-  default     = []
+  type        = map(any)
+  default     = {}
 }
 
 variable "https_redirect_enabled" {
