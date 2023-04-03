@@ -77,13 +77,29 @@ variable "response_timeout" {
   type        = number
   default     = 120
 }
+/* */
 
-variable "origins" {
-  description = "A list of origin host names keyed by an identifier"
+
+variable "origin_names" {
+  description = ""
+  type        = list(string)
+  default     = []
+}
+
+variable "origin_map" {
+  description = ""
   type        = map(any)
   default     = {}
 }
 
+variable "domain_map" {
+  description = ""
+  type        = map(any)
+  default     = {}
+}
+
+
+/* */
 variable "custom_domains" {
   description = "Azure CDN Front Door custom domains. If they are within the DNS zone (optionally created), the Validation TXT records and ALIAS/CNAME records will be created"
   type        = map(any)

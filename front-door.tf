@@ -19,25 +19,27 @@ resource "azapi_update_resource" "frontdoor_system_identity" {
 }
 
 resource "azurerm_cdn_frontdoor_origin_group" "group" {
-  name                     = "${local.resource_prefix}origingroup"
+  for_each = local.origin_names
+
+  name                     = "${local.resource_prefix}-${each.value}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
 
   load_balancing {}
 
   dynamic "health_probe" {
-    for_each = local.enable_health_probe ? [0] : []
+    for_each = each.enable_health_probe ? [0] : []
 
     content {
       protocol            = "Https"
-      interval_in_seconds = local.health_probe_interval
-      request_type        = local.health_probe_request_type
-      path                = local.health_probe_path
+      interval_in_seconds = each.health_probe_interval
+      request_type        = each.health_probe_request_type
+      path                = each.health_probe_path
     }
   }
 }
 
 resource "azurerm_cdn_frontdoor_origin" "origin" {
-  for_each = local.origins
+  for_each = azurerm_cdn_frontdoor_origin_group.group
 
   name                           = "${local.resource_prefix}origin-${each.key}"
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group.id

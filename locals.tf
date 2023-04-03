@@ -1,21 +1,23 @@
 locals {
-  environment                        = var.environment
-  project_name                       = var.project_name
-  resource_prefix                    = "${local.environment}${local.project_name}"
-  azure_location                     = var.azure_location
-  existing_resource_group            = var.existing_resource_group
-  resource_group                     = local.existing_resource_group == "" ? azurerm_resource_group.default[0] : data.azurerm_resource_group.existing_resource_group[0]
-  tags                               = var.tags
-  sku                                = var.sku
-  enable_latency_monitor             = var.enable_latency_monitor
-  alarm_latency_threshold_ms         = var.alarm_latency_threshold_ms
-  monitor_action_group_id            = var.monitor_action_group_id
-  enable_health_probe                = var.enable_health_probe
-  health_probe_interval              = var.health_probe_interval
-  health_probe_path                  = var.health_probe_path
-  health_probe_request_type          = var.health_probe_request_type
-  response_timeout                   = var.response_timeout
-  origins                            = var.origins
+  environment                = var.environment
+  project_name               = var.project_name
+  resource_prefix            = "${local.environment}${local.project_name}"
+  azure_location             = var.azure_location
+  existing_resource_group    = var.existing_resource_group
+  resource_group             = local.existing_resource_group == "" ? azurerm_resource_group.default[0] : data.azurerm_resource_group.existing_resource_group[0]
+  tags                       = var.tags
+  sku                        = var.sku
+  enable_latency_monitor     = var.enable_latency_monitor
+  alarm_latency_threshold_ms = var.alarm_latency_threshold_ms
+  monitor_action_group_id    = var.monitor_action_group_id
+  enable_health_probe        = var.enable_health_probe
+  health_probe_interval      = var.health_probe_interval
+  health_probe_path          = var.health_probe_path
+  health_probe_request_type  = var.health_probe_request_type
+  response_timeout           = var.response_timeout
+  origin_groups              = var.origin_groups
+
+  /* */
   custom_domains                     = var.custom_domains
   use_existing_key_vault             = var.use_existing_key_vault
   existing_key_vault_id              = var.existing_key_vault_id
