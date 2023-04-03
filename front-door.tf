@@ -14,6 +14,8 @@ resource "azapi_update_resource" "frontdoor_system_identity" {
       "type" : "SystemAssigned"
     }
   })
+
+  response_export_values = ["identity.principalId"]
 }
 
 resource "azurerm_cdn_frontdoor_origin_group" "group" {
@@ -188,7 +190,7 @@ resource "azurerm_cdn_frontdoor_secret" "frontdoor" {
 
   secret {
     customer_certificate {
-      key_vault_certificate_id = azurerm_key_vault_certificate.frontdoor[each.key].versionless.id # latest
+      key_vault_certificate_id = azurerm_key_vault_certificate.frontdoor[each.key].versionless_id # latest
     }
   }
 }

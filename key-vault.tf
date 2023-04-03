@@ -84,6 +84,10 @@ resource "azurerm_key_vault_access_policy" "frontdoor" {
     "Backup",
     "Restore",
   ]
+
+  depends_on = [
+    azapi_update_resource.frontdoor_system_identity
+  ]
 }
 
 resource "azurerm_key_vault_certificate" "frontdoor" {
