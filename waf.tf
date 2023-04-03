@@ -10,24 +10,24 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
   custom_block_response_body        = filebase64("${path.module}/html/403.html")
 
   dynamic "custom_rule" {
-    for_each = local.enable_rate_limiting ? [0] : []
+    for_each = local.waf_enable_rate_limiting ? [0] : []
     content {
       name                           = "RateLimiting"
       enabled                        = true
       priority                       = 1
-      rate_limit_duration_in_minutes = local.rate_limiting_duration_in_minutes
-      rate_limit_threshold           = local.rate_limiting_threshold
+      rate_limit_duration_in_minutes = local.waf_rate_limiting_duration_in_minutes
+      rate_limit_threshold           = local.waf_rate_limiting_threshold
       type                           = "RateLimitRule"
-      action                         = "Block"
+      action                         = local.waf_mode == "Prevention" ? "Block" : "Log"
 
       dynamic "match_condition" {
-        for_each = length(local.rate_limiting_bypass_ip_list) > 0 ? [0] : []
+        for_each = length(local.waf_rate_limiting_bypass_ip_list) > 0 ? [0] : []
 
         content {
           match_variable     = "RemoteAddr"
           operator           = "IPMatch"
           negation_condition = true
-          match_values       = local.rate_limiting_bypass_ip_list
+          match_values       = local.waf_rate_limiting_bypass_ip_list
         }
       }
 
@@ -37,7 +37,24 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
         negation_condition = false
         match_values       = ["/.*"]
       }
+    }
+  }
 
+  dynamic "managed_rule" {
+    for_each = local.waf_enable_bot_protection ? [0] : []
+    content {
+      type    = local.waf_use_preview_bot_ruleset ? "BotProtection" : "Microsoft_BotManageRuleSet"
+      version = local.waf_use_preview_bot_ruleset ? "preview-0.1" : "1.0"
+      action  = local.waf_mode == "Prevention" ? "Block" : "Log"
+    }
+  }
+
+  dynamic "managed_rule" {
+    for_each = local.waf_enable_default_ruleset ? [0] : []
+    content {
+      type    = local.waf_use_new_default_ruleset ? "DefaultRuleSet" : "Microsoft_DefaultRuleSet"
+      version = local.waf_use_new_default_ruleset ? "1.0" : "2.1"
+      action  = local.waf_mode == "Prevention" ? "Block" : "Log"
     }
   }
 

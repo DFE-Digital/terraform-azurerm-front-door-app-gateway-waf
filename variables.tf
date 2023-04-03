@@ -126,42 +126,6 @@ variable "host_redirects" {
   default     = []
 }
 
-variable "enable_waf" {
-  description = "Enable CDN Front Door WAF"
-  type        = bool
-  default     = false
-}
-
-variable "enable_rate_limiting" {
-  description = "Deploy a Rate Limiting Policy on the Front Door WAF"
-  type        = bool
-  default     = false
-}
-
-variable "rate_limiting_duration_in_minutes" {
-  description = "Number of minutes to BLOCK requests that hit the Rate Limit threshold"
-  type        = number
-  default     = 1
-}
-
-variable "rate_limiting_threshold" {
-  description = "Maximum number of concurrent requests before Rate Limiting policy is applied"
-  type        = number
-  default     = 300
-}
-
-variable "rate_limiting_bypass_ip_list" {
-  description = "List if IP CIDRs to bypass the Rate Limit Policy"
-  type        = list(string)
-  default     = []
-}
-
-variable "waf_mode" {
-  description = "CDN Front Door WAF mode"
-  type        = string
-  default     = "Prevention"
-}
-
 variable "host_add_response_headers" {
   description = "List of response headers to add at the CDN Front Door `[{ \"Name\" = \"Strict-Transport-Security\", \"value\" = \"max-age=31536000\" }]`"
   type        = list(map(string))
@@ -172,4 +136,64 @@ variable "remove_response_headers" {
   description = "List of response headers to remove at the CDN Front Door"
   type        = list(string)
   default     = []
+}
+
+variable "enable_waf" {
+  description = "Enable CDN Front Door WAF"
+  type        = bool
+  default     = false
+}
+
+variable "waf_mode" {
+  description = "CDN Front Door WAF mode"
+  type        = string
+  default     = "Prevention"
+}
+
+variable "waf_enable_rate_limiting" {
+  description = "Deploy a Rate Limiting Policy on the Front Door WAF"
+  type        = bool
+  default     = false
+}
+
+variable "waf_rate_limiting_duration_in_minutes" {
+  description = "Number of minutes to BLOCK requests that hit the Rate Limit threshold"
+  type        = number
+  default     = 1
+}
+
+variable "waf_rate_limiting_threshold" {
+  description = "Maximum number of concurrent requests before Rate Limiting policy is applied"
+  type        = number
+  default     = 300
+}
+
+variable "waf_rate_limiting_bypass_ip_list" {
+  description = "List if IP CIDRs to bypass the Rate Limit Policy"
+  type        = list(string)
+  default     = []
+}
+
+variable "waf_enable_bot_protection" {
+  description = "Deploy a Bot Protection Policy on the Front Door WAF"
+  type        = bool
+  default     = false
+}
+
+variable "waf_use_preview_bot_ruleset" {
+  description = "Use the newer 'BotProtection' ruleset instead of the older 'Microsoft_BotManagerRuleSet' ruleset"
+  type        = bool
+  default     = true
+}
+
+variable "waf_enable_default_ruleset" {
+  description = "Deploy a Managed DRS Policy on the Front Door WAF"
+  type        = bool
+  default     = false
+}
+
+variable "waf_use_new_default_ruleset" {
+  description = "Use the newer 'DefaultRuleSet' ruleset instead of the older 'Microsoft_DefaultRuleSet' ruleset"
+  type        = bool
+  default     = true
 }

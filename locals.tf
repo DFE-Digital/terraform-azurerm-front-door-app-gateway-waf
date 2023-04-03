@@ -34,10 +34,14 @@ locals {
     local.ruleset_add_response_headers_id,
     local.ruleset_remove_response_headers_id,
   )
-  enable_rate_limiting              = var.enable_rate_limiting
-  rate_limiting_duration_in_minutes = var.rate_limiting_duration_in_minutes
-  rate_limiting_threshold           = var.rate_limiting_threshold
-  enable_waf                        = var.enable_waf
-  waf_mode                          = var.waf_mode
-  rate_limiting_bypass_ip_list      = var.rate_limiting_bypass_ip_list
+  enable_waf                            = var.enable_waf
+  waf_mode                              = var.waf_mode
+  waf_enable_bot_protection             = var.waf_enable_bot_protection
+  waf_use_preview_bot_ruleset           = var.waf_use_preview_bot_ruleset
+  waf_enable_default_ruleset            = var.waf_enable_default_ruleset
+  waf_use_new_default_ruleset           = var.waf_use_new_default_ruleset
+  waf_enable_rate_limiting              = var.waf_enable_rate_limiting
+  waf_rate_limiting_duration_in_minutes = var.waf_rate_limiting_duration_in_minutes
+  waf_rate_limiting_threshold           = var.waf_rate_limiting_threshold
+  waf_rate_limiting_bypass_ip_list      = var.waf_rate_limiting_bypass_ip_list
 }
