@@ -23,14 +23,15 @@ module "azurerm_front_door_waf" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.4.2 |
+| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 1.0.0 |
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | >= 2.36.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 3.47.0 |
-| <a name="requirement_null"></a> [null](#requirement\_null) | >= 3.2.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
+| <a name="provider_azapi"></a> [azapi](#provider\_azapi) | 1.4.0 |
 | <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 2.36.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.49.0 |
 
@@ -38,6 +39,7 @@ module "azurerm_front_door_waf" {
 
 | Name | Type |
 |------|------|
+| [azapi_update_resource.frontdoor_system_identity](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) | resource |
 | [azurerm_cdn_frontdoor_custom_domain.custom_domain](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_custom_domain) | resource |
 | [azurerm_cdn_frontdoor_custom_domain_association.custom_domain_association](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_custom_domain_association) | resource |
 | [azurerm_cdn_frontdoor_endpoint.endpoint](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_endpoint) | resource |

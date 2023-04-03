@@ -6,6 +6,16 @@ resource "azurerm_cdn_frontdoor_profile" "cdn" {
   tags                     = local.tags
 }
 
+resource "azapi_update_resource" "frontdoor_system_identity" {
+  type        = "Microsoft.Cdn/profiles@2023-02-01-preview"
+  resource_id = azurerm_cdn_frontdoor_profile.cdn.id
+  body = jsonencode({
+    "identity" : {
+      "type" : "SystemAssigned"
+    }
+  })
+}
+
 resource "azurerm_cdn_frontdoor_origin_group" "group" {
   name                     = "${local.resource_prefix}origingroup"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
@@ -178,7 +188,7 @@ resource "azurerm_cdn_frontdoor_secret" "frontdoor" {
 
   secret {
     customer_certificate {
-      key_vault_certificate_id = azurerm_key_vault_certificate.frontdoor[each.key].id
+      key_vault_certificate_id = azurerm_key_vault_certificate.frontdoor[each.key].versionless.id # latest
     }
   }
 }
