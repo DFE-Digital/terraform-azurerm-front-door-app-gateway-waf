@@ -10,12 +10,17 @@ locals {
   enable_latency_monitor     = var.enable_latency_monitor
   alarm_latency_threshold_ms = var.alarm_latency_threshold_ms
   monitor_action_group_id    = var.monitor_action_group_id
-  enable_health_probe        = var.enable_health_probe
-  health_probe_interval      = var.health_probe_interval
-  health_probe_path          = var.health_probe_path
-  health_probe_request_type  = var.health_probe_request_type
   response_timeout           = var.response_timeout
-  origin_groups              = var.origin_groups
+  /* */
+
+  origin_groups = { for k, g in var.origin_groups : k => {
+    enable_health_probe       = try(g.enable_health_probe, true)
+    health_probe_interval     = try(g.health_probe_interval, 60)
+    health_probe_request_type = try(g.health_probe_request_type, "HEAD")
+    health_probe_path         = try(g.health_probe_path, "/")
+  } }
+  origin_map = { for k, o in var.origin_groups : k => toset(o.origins) }
+  domain_map = { for k, d in var.origin_groups : k => toset(d.domains) }
 
   /* */
   custom_domains                     = var.custom_domains

@@ -31,12 +31,6 @@ variable "sku" {
   default     = "Standard_AzureFrontDoor"
 }
 
-variable "enable_health_probe" {
-  description = "Enable CDN Front Door health probe"
-  type        = bool
-  default     = true
-}
-
 variable "enable_latency_monitor" {
   description = "Monitor latency between the Front Door and it's origin"
   type        = bool
@@ -54,24 +48,6 @@ variable "alarm_latency_threshold_ms" {
   default     = 1000
 }
 
-variable "health_probe_interval" {
-  description = "Specifies the number of seconds between health probes."
-  type        = number
-  default     = 120
-}
-
-variable "health_probe_path" {
-  description = "Specifies the path relative to the origin that is used to determine the health of the origin."
-  type        = string
-  default     = "/"
-}
-
-variable "health_probe_request_type" {
-  description = "Specifies the type of health probe request that is made."
-  type        = string
-  default     = "GET"
-}
-
 variable "response_timeout" {
   description = "Azure CDN Front Door response timeout in seconds"
   type        = number
@@ -79,25 +55,11 @@ variable "response_timeout" {
 }
 /* */
 
-
-variable "origin_names" {
-  description = ""
-  type        = list(string)
-  default     = []
-}
-
-variable "origin_map" {
+variable "origin_groups" {
   description = ""
   type        = map(any)
   default     = {}
 }
-
-variable "domain_map" {
-  description = ""
-  type        = map(any)
-  default     = {}
-}
-
 
 /* */
 variable "custom_domains" {

@@ -74,24 +74,18 @@ module "azurerm_front_door_waf" {
 | <a name="input_azure_location"></a> [azure\_location](#input\_azure\_location) | Azure location in which to launch resources. | `string` | n/a | yes |
 | <a name="input_certificates"></a> [certificates](#input\_certificates) | Customer managed certificates (.pfx) | `map(any)` | `{}` | no |
 | <a name="input_custom_domains"></a> [custom\_domains](#input\_custom\_domains) | Azure CDN Front Door custom domains. If they are within the DNS zone (optionally created), the Validation TXT records and ALIAS/CNAME records will be created | `map(any)` | `{}` | no |
-| <a name="input_domain_map"></a> [domain\_map](#input\_domain\_map) | n/a | `map(any)` | `{}` | no |
-| <a name="input_enable_health_probe"></a> [enable\_health\_probe](#input\_enable\_health\_probe) | Enable CDN Front Door health probe | `bool` | `true` | no |
 | <a name="input_enable_latency_monitor"></a> [enable\_latency\_monitor](#input\_enable\_latency\_monitor) | Monitor latency between the Front Door and it's origin | `bool` | `true` | no |
 | <a name="input_enable_waf"></a> [enable\_waf](#input\_enable\_waf) | Enable CDN Front Door WAF | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment name. Will be used along with `project_name` as a prefix for all resources. | `string` | n/a | yes |
 | <a name="input_existing_key_vault_id"></a> [existing\_key\_vault\_id](#input\_existing\_key\_vault\_id) | The ID of an existing Key Vault. Must be defined if 'use\_existing\_key\_vault' is true | `string` | `""` | no |
 | <a name="input_existing_resource_group"></a> [existing\_resource\_group](#input\_existing\_resource\_group) | Conditionally launch resources into an existing resource group. Specifying this will NOT create a resource group. | `string` | `""` | no |
-| <a name="input_health_probe_interval"></a> [health\_probe\_interval](#input\_health\_probe\_interval) | Specifies the number of seconds between health probes. | `number` | `120` | no |
-| <a name="input_health_probe_path"></a> [health\_probe\_path](#input\_health\_probe\_path) | Specifies the path relative to the origin that is used to determine the health of the origin. | `string` | `"/"` | no |
-| <a name="input_health_probe_request_type"></a> [health\_probe\_request\_type](#input\_health\_probe\_request\_type) | Specifies the type of health probe request that is made. | `string` | `"GET"` | no |
 | <a name="input_host_add_response_headers"></a> [host\_add\_response\_headers](#input\_host\_add\_response\_headers) | List of response headers to add at the CDN Front Door `[{ "Name" = "Strict-Transport-Security", "value" = "max-age=31536000" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_host_redirects"></a> [host\_redirects](#input\_host\_redirects) | CDN FrontDoor host redirects `[{ "from" = "example.com", "to" = "www.example.com" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_https_redirect_enabled"></a> [https\_redirect\_enabled](#input\_https\_redirect\_enabled) | Redirect all HTTP traffic to HTTPS | `bool` | `true` | no |
 | <a name="input_key_vault_access_users"></a> [key\_vault\_access\_users](#input\_key\_vault\_access\_users) | A list of Azure AD Users that are granted Secret & Certificate management permissions to the Key Vault | `list(string)` | `[]` | no |
 | <a name="input_key_vault_allow_ipv4_list"></a> [key\_vault\_allow\_ipv4\_list](#input\_key\_vault\_allow\_ipv4\_list) | A list of IPv4 addresses to permit access to the Key Vault that holds the TLS Certificates | `list(string)` | `[]` | no |
 | <a name="input_monitor_action_group_id"></a> [monitor\_action\_group\_id](#input\_monitor\_action\_group\_id) | Specify the Action Group ID that you want to send the Latency monitor alerts to | `string` | n/a | yes |
-| <a name="input_origin_map"></a> [origin\_map](#input\_origin\_map) | n/a | `map(any)` | `{}` | no |
-| <a name="input_origin_names"></a> [origin\_names](#input\_origin\_names) | n/a | `list(string)` | `[]` | no |
+| <a name="input_origin_groups"></a> [origin\_groups](#input\_origin\_groups) | n/a | `map(any)` | `{}` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Project name. Will be used along with `environment` as a prefix for all resources. | `string` | n/a | yes |
 | <a name="input_remove_response_headers"></a> [remove\_response\_headers](#input\_remove\_response\_headers) | List of response headers to remove at the CDN Front Door | `list(string)` | `[]` | no |
 | <a name="input_response_timeout"></a> [response\_timeout](#input\_response\_timeout) | Azure CDN Front Door response timeout in seconds | `number` | `120` | no |

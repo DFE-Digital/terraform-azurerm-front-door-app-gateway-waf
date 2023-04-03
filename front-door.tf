@@ -19,34 +19,34 @@ resource "azapi_update_resource" "frontdoor_system_identity" {
 }
 
 resource "azurerm_cdn_frontdoor_origin_group" "group" {
-  for_each = local.origin_names
+  for_each = local.origin_groups
 
-  name                     = "${local.resource_prefix}-${each.value}"
+  name                     = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
 
   load_balancing {}
 
   dynamic "health_probe" {
-    for_each = each.enable_health_probe ? [0] : []
+    for_each = each.value.enable_health_probe ? [0] : []
 
     content {
       protocol            = "Https"
-      interval_in_seconds = each.health_probe_interval
-      request_type        = each.health_probe_request_type
-      path                = each.health_probe_path
+      interval_in_seconds = each.value.health_probe_interval
+      request_type        = each.value.health_probe_request_type
+      path                = each.value.health_probe_path
     }
   }
 }
 
 resource "azurerm_cdn_frontdoor_origin" "origin" {
-  for_each = azurerm_cdn_frontdoor_origin_group.group
+  for_each = local.origin_map
 
   name                           = "${local.resource_prefix}origin-${each.key}"
-  cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group.id
+  cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group[each.key].id
   enabled                        = true
   certificate_name_check_enabled = true
-  host_name                      = each.value
-  origin_host_header             = each.value
+  host_name                      = each.value[0]
+  origin_host_header             = each.value[0]
   http_port                      = 80
   https_port                     = 443
 }
@@ -54,27 +54,27 @@ resource "azurerm_cdn_frontdoor_origin" "origin" {
 resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
   name                     = "${local.resource_prefix}cdnendpoint"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
-  tags                     = local.tags
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
-  for_each = local.custom_domains
+  for_each = local.domain_map
 
-  name                     = "${local.resource_prefix}custom-domain-${each.key}"
+  name                     = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
-  dns_zone_id              = try(each.value.dns_zone_id != "", false) ? each.value.dns_zone_id : null
-  host_name                = each.value.host_name
+  host_name                = each.value[0]
 
   tls {
-    certificate_type    = try(each.value.certificate_type != "", false) ? each.value.certificate_type : "ManagedCertificate"
-    minimum_tls_version = try(each.value.min_tls_version != "", false) ? each.value.min_tls_version : "TLS12"
+    certificate_type    = "ManagedCertificate"
+    minimum_tls_version = "TLS12"
   }
 }
 
 resource "azurerm_cdn_frontdoor_route" "route" {
+  for_each = local.origin_groups
+
   name                          = "${local.resource_prefix}route"
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
-  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group.id
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.key].id
   cdn_frontdoor_origin_ids      = [for o in azurerm_cdn_frontdoor_origin.origin : o.id]
   cdn_frontdoor_rule_set_ids    = local.ruleset_ids
   enabled                       = true
@@ -92,10 +92,10 @@ resource "azurerm_cdn_frontdoor_route" "route" {
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain_association" "custom_domain_association" {
-  for_each = local.custom_domains
+  for_each = local.domain_map
 
   cdn_frontdoor_custom_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[each.key].id
-  cdn_frontdoor_route_ids        = [azurerm_cdn_frontdoor_route.route.id]
+  cdn_frontdoor_route_ids        = [for r in azurerm_cdn_frontdoor_route.route[each.key] : r.id]
 }
 
 resource "azurerm_cdn_frontdoor_rule_set" "redirects" {
