@@ -41,12 +41,12 @@ resource "azurerm_cdn_frontdoor_origin_group" "group" {
 resource "azurerm_cdn_frontdoor_origin" "origin" {
   for_each = local.origin_map
 
-  name                           = "${local.resource_prefix}origin-${each.key}"
-  cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group[each.key].id
+  name                           = "${local.resource_prefix}origin-${each.value.name}"
+  cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
   enabled                        = true
   certificate_name_check_enabled = true
-  host_name                      = each.value[0]
-  origin_host_header             = each.value[0]
+  host_name                      = each.value.host_name
+  origin_host_header             = each.value.host_name
   http_port                      = 80
   https_port                     = 443
 }

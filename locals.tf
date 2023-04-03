@@ -19,7 +19,11 @@ locals {
     health_probe_request_type = try(g.health_probe_request_type, "HEAD")
     health_probe_path         = try(g.health_probe_path, "/")
   } }
-  origin_map = { for k, o in var.origin_groups : k => toset(o.origins) }
+  origin_map = flatten([for k, o in var.origin_groups : [for _o in o.origins : {
+    name : k,
+    host_name : _o,
+    origin_group_name : k
+  }]])
   domain_map = { for k, d in var.origin_groups : k => toset(d.domains) }
 
   /* */
