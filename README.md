@@ -31,6 +31,7 @@ module "azurerm_front_door_waf" {
 
 | Name | Version |
 |------|---------|
+| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 2.36.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.49.0 |
 
 ## Resources
@@ -55,9 +56,11 @@ module "azurerm_front_door_waf" {
 | [azurerm_cdn_frontdoor_security_policy.waf](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_security_policy) | resource |
 | [azurerm_key_vault.frontdoor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault) | resource |
 | [azurerm_key_vault_access_policy.frontdoor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy) | resource |
+| [azurerm_key_vault_access_policy.user](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy) | resource |
 | [azurerm_key_vault_certificate.frontdoor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_certificate) | resource |
 | [azurerm_monitor_metric_alert.latency](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_metric_alert) | resource |
 | [azurerm_resource_group.default](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
+| [azuread_user.key_vault_access](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/user) | data source |
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
 | [azurerm_resource_group.existing_resource_group](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
 
@@ -81,6 +84,7 @@ module "azurerm_front_door_waf" {
 | <a name="input_host_add_response_headers"></a> [host\_add\_response\_headers](#input\_host\_add\_response\_headers) | List of response headers to add at the CDN Front Door `[{ "Name" = "Strict-Transport-Security", "value" = "max-age=31536000" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_host_redirects"></a> [host\_redirects](#input\_host\_redirects) | CDN FrontDoor host redirects `[{ "from" = "example.com", "to" = "www.example.com" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_https_redirect_enabled"></a> [https\_redirect\_enabled](#input\_https\_redirect\_enabled) | Redirect all HTTP traffic to HTTPS | `bool` | `true` | no |
+| <a name="input_key_vault_access_users"></a> [key\_vault\_access\_users](#input\_key\_vault\_access\_users) | A list of Azure AD Users that are granted Secret & Certificate management permissions to the Key Vault | `list(string)` | `[]` | no |
 | <a name="input_key_vault_allow_ipv4_list"></a> [key\_vault\_allow\_ipv4\_list](#input\_key\_vault\_allow\_ipv4\_list) | A list of IPv4 addresses to permit access to the Key Vault that holds the TLS Certificates | `list(string)` | `[]` | no |
 | <a name="input_monitor_action_group_id"></a> [monitor\_action\_group\_id](#input\_monitor\_action\_group\_id) | Specify the Action Group ID that you want to send the Latency monitor alerts to | `string` | n/a | yes |
 | <a name="input_origins"></a> [origins](#input\_origins) | A list of origin host names keyed by an identifier | `map(any)` | `{}` | no |

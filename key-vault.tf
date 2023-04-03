@@ -16,6 +16,42 @@ resource "azurerm_key_vault" "frontdoor" {
   }
 }
 
+resource "azurerm_key_vault_access_policy" "user" {
+  for_each = data.azuread_user.key_vault_access
+
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = each.value["object_id"]
+  key_vault_id = local.key_vault_id
+
+  certificate_permissions = [
+    "Get",
+    "List",
+    "Update",
+    "Create",
+    "Import",
+    "Delete",
+    "Recover",
+    "Backup",
+    "Restore",
+    "ManageContacts",
+    "ManageIssuers",
+    "GetIssuers",
+    "ListIssuers",
+    "SetIssuers",
+    "DeleteIssuers",
+  ]
+
+  secret_permissions = [
+    "Get",
+    "List",
+    "Set",
+    "Delete",
+    "Recover",
+    "Backup",
+    "Restore",
+  ]
+}
+
 resource "azurerm_key_vault_access_policy" "frontdoor" {
   key_vault_id   = local.key_vault_id
   tenant_id      = data.azurerm_client_config.current.tenant_id

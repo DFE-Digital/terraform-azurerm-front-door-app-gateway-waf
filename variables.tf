@@ -114,6 +114,12 @@ variable "key_vault_allow_ipv4_list" {
   default     = []
 }
 
+variable "key_vault_access_users" {
+  description = "A list of Azure AD Users that are granted Secret & Certificate management permissions to the Key Vault"
+  type        = list(string)
+  default     = []
+}
+
 variable "certificates" {
   description = "Customer managed certificates (.pfx)"
   type        = map(any)

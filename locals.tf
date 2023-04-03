@@ -21,6 +21,7 @@ locals {
   existing_key_vault_id              = var.existing_key_vault_id
   key_vault_id                       = local.use_existing_key_vault ? local.existing_key_vault_id : azurerm_key_vault.frontdoor[0].id
   key_vault_allow_ipv4_list          = var.key_vault_allow_ipv4_list
+  key_vault_access_users             = toset(var.key_vault_access_users)
   certificates                       = var.certificates
   https_redirect_enabled             = var.https_redirect_enabled
   host_redirects                     = var.host_redirects
