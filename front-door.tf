@@ -39,7 +39,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "group" {
 }
 
 resource "azurerm_cdn_frontdoor_origin" "origin" {
-  for_each = local.origin_map
+  for_each = try({ for origin in local.origin_map : origin.name => origin }, {})
 
   name                           = "${local.resource_prefix}origin-${each.value.name}"
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
