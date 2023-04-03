@@ -72,7 +72,6 @@ module "azurerm_front_door_waf" {
 | <a name="input_custom_domains"></a> [custom\_domains](#input\_custom\_domains) | Azure CDN Front Door custom domains. If they are within the DNS zone (optionally created), the Validation TXT records and ALIAS/CNAME records will be created | `map(any)` | `{}` | no |
 | <a name="input_enable_health_probe"></a> [enable\_health\_probe](#input\_enable\_health\_probe) | Enable CDN Front Door health probe | `bool` | `true` | no |
 | <a name="input_enable_latency_monitor"></a> [enable\_latency\_monitor](#input\_enable\_latency\_monitor) | Monitor latency between the Front Door and it's origin | `bool` | `true` | no |
-| <a name="input_enable_rate_limiting"></a> [enable\_rate\_limiting](#input\_enable\_rate\_limiting) | Deploy a Rate Limiting Policy on the Front Door WAF | `bool` | `false` | no |
 | <a name="input_enable_waf"></a> [enable\_waf](#input\_enable\_waf) | Enable CDN Front Door WAF | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment name. Will be used along with `project_name` as a prefix for all resources. | `string` | n/a | yes |
 | <a name="input_existing_key_vault_id"></a> [existing\_key\_vault\_id](#input\_existing\_key\_vault\_id) | The ID of an existing Key Vault. Must be defined if 'use\_existing\_key\_vault' is true | `string` | `""` | no |
@@ -87,15 +86,20 @@ module "azurerm_front_door_waf" {
 | <a name="input_monitor_action_group_id"></a> [monitor\_action\_group\_id](#input\_monitor\_action\_group\_id) | Specify the Action Group ID that you want to send the Latency monitor alerts to | `string` | n/a | yes |
 | <a name="input_origins"></a> [origins](#input\_origins) | A list of origin host names keyed by an identifier | `map(any)` | `{}` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Project name. Will be used along with `environment` as a prefix for all resources. | `string` | n/a | yes |
-| <a name="input_rate_limiting_bypass_ip_list"></a> [rate\_limiting\_bypass\_ip\_list](#input\_rate\_limiting\_bypass\_ip\_list) | List if IP CIDRs to bypass the Rate Limit Policy | `list(string)` | `[]` | no |
-| <a name="input_rate_limiting_duration_in_minutes"></a> [rate\_limiting\_duration\_in\_minutes](#input\_rate\_limiting\_duration\_in\_minutes) | Number of minutes to BLOCK requests that hit the Rate Limit threshold | `number` | `1` | no |
-| <a name="input_rate_limiting_threshold"></a> [rate\_limiting\_threshold](#input\_rate\_limiting\_threshold) | Maximum number of concurrent requests before Rate Limiting policy is applied | `number` | `300` | no |
 | <a name="input_remove_response_headers"></a> [remove\_response\_headers](#input\_remove\_response\_headers) | List of response headers to remove at the CDN Front Door | `list(string)` | `[]` | no |
 | <a name="input_response_timeout"></a> [response\_timeout](#input\_response\_timeout) | Azure CDN Front Door response timeout in seconds | `number` | `120` | no |
 | <a name="input_sku"></a> [sku](#input\_sku) | Azure CDN Front Door SKU | `string` | `"Standard_AzureFrontDoor"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to be applied to all resources | `map(string)` | `{}` | no |
 | <a name="input_use_existing_key_vault"></a> [use\_existing\_key\_vault](#input\_use\_existing\_key\_vault) | Use an existing Key Vault to store a Customer managed Certificate | `bool` | `false` | no |
+| <a name="input_waf_enable_bot_protection"></a> [waf\_enable\_bot\_protection](#input\_waf\_enable\_bot\_protection) | Deploy a Bot Protection Policy on the Front Door WAF | `bool` | `false` | no |
+| <a name="input_waf_enable_default_ruleset"></a> [waf\_enable\_default\_ruleset](#input\_waf\_enable\_default\_ruleset) | Deploy a Managed DRS Policy on the Front Door WAF | `bool` | `false` | no |
+| <a name="input_waf_enable_rate_limiting"></a> [waf\_enable\_rate\_limiting](#input\_waf\_enable\_rate\_limiting) | Deploy a Rate Limiting Policy on the Front Door WAF | `bool` | `false` | no |
 | <a name="input_waf_mode"></a> [waf\_mode](#input\_waf\_mode) | CDN Front Door WAF mode | `string` | `"Prevention"` | no |
+| <a name="input_waf_rate_limiting_bypass_ip_list"></a> [waf\_rate\_limiting\_bypass\_ip\_list](#input\_waf\_rate\_limiting\_bypass\_ip\_list) | List if IP CIDRs to bypass the Rate Limit Policy | `list(string)` | `[]` | no |
+| <a name="input_waf_rate_limiting_duration_in_minutes"></a> [waf\_rate\_limiting\_duration\_in\_minutes](#input\_waf\_rate\_limiting\_duration\_in\_minutes) | Number of minutes to BLOCK requests that hit the Rate Limit threshold | `number` | `1` | no |
+| <a name="input_waf_rate_limiting_threshold"></a> [waf\_rate\_limiting\_threshold](#input\_waf\_rate\_limiting\_threshold) | Maximum number of concurrent requests before Rate Limiting policy is applied | `number` | `300` | no |
+| <a name="input_waf_use_new_default_ruleset"></a> [waf\_use\_new\_default\_ruleset](#input\_waf\_use\_new\_default\_ruleset) | Use the newer 'DefaultRuleSet' ruleset instead of the older 'Microsoft\_DefaultRuleSet' ruleset | `bool` | `true` | no |
+| <a name="input_waf_use_preview_bot_ruleset"></a> [waf\_use\_preview\_bot\_ruleset](#input\_waf\_use\_preview\_bot\_ruleset) | Use the newer 'BotProtection' ruleset instead of the older 'Microsoft\_BotManagerRuleSet' ruleset | `bool` | `true` | no |
 
 ## Outputs
 
