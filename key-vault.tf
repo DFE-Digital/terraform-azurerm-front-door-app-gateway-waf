@@ -9,6 +9,11 @@ resource "azurerm_key_vault" "frontdoor" {
   soft_delete_retention_days = 7
   purge_protection_enabled   = true
 
+  network_acls {
+    bypass         = "AzureServices"
+    default_action = "Deny"
+  }
+
   dynamic "network_acls" {
     for_each = length(local.key_vault_allow_ipv4_list) > 0 ? [0] : []
 
