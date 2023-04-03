@@ -53,9 +53,9 @@ resource "azurerm_key_vault_access_policy" "user" {
 }
 
 resource "azurerm_key_vault_access_policy" "frontdoor" {
-  key_vault_id   = local.key_vault_id
-  tenant_id      = data.azurerm_client_config.current.tenant_id
-  object_id      = jsondecode(azapi_update_resource.frontdoor_system_identity.output).identity.principalId
+  key_vault_id = local.key_vault_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = jsondecode(azapi_update_resource.frontdoor_system_identity.output).identity.principalId
 
   certificate_permissions = [
     "Get",
