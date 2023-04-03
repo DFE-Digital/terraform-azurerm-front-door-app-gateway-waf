@@ -19,6 +19,7 @@ resource "azurerm_key_vault" "frontdoor" {
 resource "azurerm_key_vault_access_policy" "frontdoor" {
   key_vault_id   = local.key_vault_id
   tenant_id      = data.azurerm_client_config.current.tenant_id
+  object_id      = "119401db-410e-40ae-a7cb-c994e162b255" # Microsoft.AzureFrontDoor-Cdn
   application_id = "205478c0-bd83-4e1b-a9d6-db63a3e1e1c8" # Microsoft.AzureFrontDoor-Cdn
 
   certificate_permissions = [
