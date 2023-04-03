@@ -12,50 +12,42 @@ resource "azurerm_key_vault" "frontdoor" {
   network_acls {
     bypass         = "AzureServices"
     default_action = "Deny"
+    ip_rules       = local.key_vault_allow_ipv4_list
   }
+}
 
-  dynamic "network_acls" {
-    for_each = length(local.key_vault_allow_ipv4_list) > 0 ? [0] : []
+resource "azurerm_key_vault_access_policy" "frontdoor" {
+  key_vault_id   = azurerm_key_vault.frontdoor.id
+  tenant_id      = data.azurerm_client_config.current.tenant_id
+  application_id = "205478c0-bd83-4e1b-a9d6-db63a3e1e1c8" # Microsoft.AzureFrontDoor-Cdn
 
-    content {
-      default_action = "Deny"
-      bypass         = "AzureServices"
-      ip_rules       = local.key_vault_allow_ipv4_list
-    }
-  }
+  certificate_permissions = [
+    "Get",
+    "List",
+    "Update",
+    "Create",
+    "Import",
+    "Delete",
+    "Recover",
+    "Backup",
+    "Restore",
+    "ManageContacts",
+    "ManageIssuers",
+    "GetIssuers",
+    "ListIssuers",
+    "SetIssuers",
+    "DeleteIssuers",
+  ]
 
-  access_policy {
-    tenant_id      = data.azurerm_client_config.current.tenant_id
-    application_id = "205478c0-bd83-4e1b-a9d6-db63a3e1e1c8" # Microsoft.AzureFrontDoor-Cdn
-
-    certificate_permissions = [
-      "Get",
-      "List",
-      "Update",
-      "Create",
-      "Import",
-      "Delete",
-      "Recover",
-      "Backup",
-      "Restore",
-      "ManageContacts",
-      "ManageIssuers",
-      "GetIssuers",
-      "ListIssuers",
-      "SetIssuers",
-      "DeleteIssuers",
-    ]
-
-    secret_permissions = [
-      "Get",
-      "List",
-      "Set",
-      "Delete",
-      "Recover",
-      "Backup",
-      "Restore",
-    ]
-  }
+  secret_permissions = [
+    "Get",
+    "List",
+    "Set",
+    "Delete",
+    "Recover",
+    "Backup",
+    "Restore",
+  ]
 }
 
 resource "azurerm_key_vault_certificate" "frontdoor" {
