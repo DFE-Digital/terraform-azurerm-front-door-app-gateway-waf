@@ -193,4 +193,9 @@ resource "azurerm_cdn_frontdoor_secret" "frontdoor" {
       key_vault_certificate_id = azurerm_key_vault_certificate.frontdoor[each.key].versionless_id # latest
     }
   }
+
+  # Can't set the Secret unless we have the correct permission set first
+  depends_on = [
+    azurerm_key_vault_access_policy.user
+  ]
 }
