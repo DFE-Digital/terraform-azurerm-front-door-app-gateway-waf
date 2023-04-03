@@ -7,5 +7,5 @@ data "azurerm_resource_group" "existing_resource_group" {
 data "azurerm_client_config" "current" {}
 
 data "azuread_application" "frontdoor" {
-  display_name = local.azuread_application_display_name
+  application_id = "ad0e1c7e-6d38-4ba4-9efd-0bc77ba9f037" # Microsoft.Azure.Frontdoor
 }
