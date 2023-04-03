@@ -24,48 +24,31 @@ resource "azurerm_key_vault" "frontdoor" {
     application_id = data.azuread_application.frontdoor.object_id
 
     certificate_permissions = [
-      "Create",
-      "Delete",
-      "DeleteIssuers",
       "Get",
-      "GetIssuers",
-      "Import",
       "List",
-      "ListIssuers",
+      "Update",
+      "Create",
+      "Import",
+      "Delete",
+      "Recover",
+      "Backup",
+      "Restore",
       "ManageContacts",
       "ManageIssuers",
+      "GetIssuers",
+      "ListIssuers",
       "SetIssuers",
-      "Update",
-    ]
-
-    key_permissions = [
-      "Backup",
-      "Create",
-      "Decrypt",
-      "Delete",
-      "Encrypt",
-      "Get",
-      "Import",
-      "List",
-      "Purge",
-      "Recover",
-      "Restore",
-      "Sign",
-      "UnwrapKey",
-      "Update",
-      "Verify",
-      "WrapKey",
+      "DeleteIssuers",
     ]
 
     secret_permissions = [
-      "Backup",
-      "Delete",
       "Get",
       "List",
-      "Purge",
-      "Recover",
-      "Restore",
       "Set",
+      "Delete",
+      "Recover",
+      "Backup",
+      "Restore",
     ]
   }
 }
