@@ -68,6 +68,7 @@ module "azurerm_front_door_waf" {
 |------|-------------|------|---------|:--------:|
 | <a name="input_alarm_latency_threshold_ms"></a> [alarm\_latency\_threshold\_ms](#input\_alarm\_latency\_threshold\_ms) | Specify a number in milliseconds which should be set as a threshold for a request latency monitoring alarm | `number` | `1000` | no |
 | <a name="input_azure_location"></a> [azure\_location](#input\_azure\_location) | Azure location in which to launch resources. | `string` | n/a | yes |
+| <a name="input_azuread_application_display_name"></a> [azuread\_application\_display\_name](#input\_azuread\_application\_display\_name) | The name of an Azure AD App Registration that can access Key Vault and Azure Front Door | `string` | `"Microsoft.AzureFrontDoor-Cdn"` | no |
 | <a name="input_certificates"></a> [certificates](#input\_certificates) | Customer managed certificates (.pfx) | `map(any)` | `{}` | no |
 | <a name="input_custom_domains"></a> [custom\_domains](#input\_custom\_domains) | Azure CDN Front Door custom domains. If they are within the DNS zone (optionally created), the Validation TXT records and ALIAS/CNAME records will be created | `map(any)` | `{}` | no |
 | <a name="input_enable_health_probe"></a> [enable\_health\_probe](#input\_enable\_health\_probe) | Enable CDN Front Door health probe | `bool` | `true` | no |

@@ -114,6 +114,12 @@ variable "key_vault_allow_ipv4_list" {
   default     = []
 }
 
+variable "azuread_application_display_name" {
+  description = "The name of an Azure AD App Registration that can access Key Vault and Azure Front Door"
+  type        = string
+  default     = "Microsoft.AzureFrontDoor-Cdn"
+}
+
 variable "certificates" {
   description = "Customer managed certificates (.pfx)"
   type        = map(any)

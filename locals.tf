@@ -20,6 +20,7 @@ locals {
   use_existing_key_vault             = var.use_existing_key_vault
   existing_key_vault_id              = var.existing_key_vault_id
   key_vault_id                       = local.use_existing_key_vault ? local.existing_key_vault_id : azurerm_key_vault.frontdoor[0].id
+  azuread_application_display_name   = var.azuread_application_display_name
   key_vault_allow_ipv4_list          = var.key_vault_allow_ipv4_list
   certificates                       = var.certificates
   https_redirect_enabled             = var.https_redirect_enabled
