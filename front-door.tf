@@ -41,7 +41,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "group" {
 resource "azurerm_cdn_frontdoor_origin" "origin" {
   for_each = try({ for origin in local.origin_map : origin.name => origin }, {})
 
-  name                           = "${local.resource_prefix}origin-${each.value.name}"
+  name                           = "${local.resource_prefix}origin-${each.key}"
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
   enabled                        = true
   certificate_name_check_enabled = true
@@ -74,15 +74,15 @@ resource "azurerm_cdn_frontdoor_route" "route" {
 
   name                          = "${local.resource_prefix}route"
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
-  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
-  cdn_frontdoor_origin_ids      = [for o in azurerm_cdn_frontdoor_origin.origin[each.value.origin_group_name] : o.id]
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.key].id
+  cdn_frontdoor_origin_ids      = [for o in azurerm_cdn_frontdoor_origin.origin[each.key] : o.id]
   # cdn_frontdoor_rule_set_ids    = local.ruleset_ids
   enabled                       = true
 
   forwarding_protocol    = "HttpsOnly"
-  https_redirect_enabled = local.origin_groups[each.value.origin_group_name].https_redirect_enabled
+  https_redirect_enabled = local.origin_groups[each.key].https_redirect_enabled
   patterns_to_match      = ["/*"]
-  supported_protocols    = local.origin_groups[each.value.origin_group_name].https_redirect_enabled ? ["Http", "Https"] : ["Http"]
+  supported_protocols    = local.origin_groups[each.key].https_redirect_enabled ? ["Http", "Https"] : ["Http"]
 
   cdn_frontdoor_custom_domain_ids = [
     for custom_domain in azurerm_cdn_frontdoor_custom_domain.custom_domain[each.value.name] : custom_domain.id
