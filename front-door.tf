@@ -75,11 +75,11 @@ resource "azurerm_cdn_frontdoor_route" "route" {
   name                          = "${local.resource_prefix}route"
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
-  cdn_frontdoor_origin_ids      = [
+  cdn_frontdoor_origin_ids = [
     for origin in each.value.cdn_frontdoor_origin_ids : azurerm_cdn_frontdoor_origin.origin[origin].id
   ]
   # cdn_frontdoor_rule_set_ids    = local.ruleset_ids
-  enabled                       = true
+  enabled = true
 
   forwarding_protocol    = "HttpsOnly"
   https_redirect_enabled = each.value.https_redirect_enabled
