@@ -57,9 +57,9 @@ resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
-  for_each = try({ for domain in local.domain_map : domain.name => domain }, {})
+  for_each = try({ for domain in local.domain_map : domain.host_name => domain }, {})
 
-  name                     = "${local.resource_prefix}-${each.key}"
+  name                     = "${local.resource_prefix}-${each.value.name}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
   host_name                = each.value.host_name
 
@@ -70,22 +70,24 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
 }
 
 resource "azurerm_cdn_frontdoor_route" "route" {
-  for_each = try({ for origin in local.origin_map : origin.name => origin }, {})
+  for_each = try({ for route in local.route_map : route.name => route }, {})
 
   name                          = "${local.resource_prefix}route"
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
-  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.key].id
-  cdn_frontdoor_origin_ids      = [for o in azurerm_cdn_frontdoor_origin.origin[each.key] : o.id]
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
+  cdn_frontdoor_origin_ids      = [
+    for origin in each.value.cdn_frontdoor_origin_ids : azurerm_cdn_frontdoor_origin.origin[origin].id
+  ]
   # cdn_frontdoor_rule_set_ids    = local.ruleset_ids
   enabled                       = true
 
   forwarding_protocol    = "HttpsOnly"
-  https_redirect_enabled = local.origin_groups[each.key].https_redirect_enabled
+  https_redirect_enabled = each.value.https_redirect_enabled
   patterns_to_match      = ["/*"]
-  supported_protocols    = local.origin_groups[each.key].https_redirect_enabled ? ["Http", "Https"] : ["Http"]
+  supported_protocols    = each.value.https_redirect_enabled ? ["Http", "Https"] : ["Http"]
 
   cdn_frontdoor_custom_domain_ids = [
-    for custom_domain in azurerm_cdn_frontdoor_custom_domain.custom_domain[each.value.name] : custom_domain.id
+    for domain in each.value.cdn_frontdoor_custom_domain_ids : azurerm_cdn_frontdoor_custom_domain.custom_domain[domain].id
   ]
 
   link_to_default_domain = true
