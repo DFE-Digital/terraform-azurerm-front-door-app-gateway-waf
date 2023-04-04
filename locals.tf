@@ -18,13 +18,17 @@ locals {
     health_probe_interval     = try(g.health_probe_interval, 60)
     health_probe_request_type = try(g.health_probe_request_type, "HEAD")
     health_probe_path         = try(g.health_probe_path, "/")
+    https_redirect_enabled    = try(g.https_redirect_enabled, true)
   } }
   origin_map = flatten([for k, o in var.origin_groups : [for _o in o.origins : {
     name : k,
     host_name : _o,
     origin_group_name : k
   }]])
-  domain_map = { for k, d in var.origin_groups : k => toset(d.domains) }
+  domain_map = flatten([for k, o in var.origin_groups : [for _o in o.domains : {
+    name : k,
+    host_name : _o,
+  }]])
 
   /* */
   custom_domains                     = var.custom_domains

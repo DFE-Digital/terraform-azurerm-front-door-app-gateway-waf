@@ -57,11 +57,11 @@ resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
-  for_each = local.domain_map
+  for_each = try({ for domain in local.domain_map : domain.name => domain }, {})
 
   name                     = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
-  host_name                = each.value[0]
+  host_name                = each.value.host_name
 
   tls {
     certificate_type    = "ManagedCertificate"
@@ -70,119 +70,119 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
 }
 
 resource "azurerm_cdn_frontdoor_route" "route" {
-  for_each = local.origin_groups
+  for_each = try({ for origin in local.origin_map : origin.name => origin }, {})
 
   name                          = "${local.resource_prefix}route"
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
-  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.key].id
-  cdn_frontdoor_origin_ids      = [for o in azurerm_cdn_frontdoor_origin.origin : o.id]
-  cdn_frontdoor_rule_set_ids    = local.ruleset_ids
+  cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
+  cdn_frontdoor_origin_ids      = [for o in azurerm_cdn_frontdoor_origin[each.value.origin_group_name].origin : o.id]
+  # cdn_frontdoor_rule_set_ids    = local.ruleset_ids
   enabled                       = true
 
   forwarding_protocol    = "HttpsOnly"
-  https_redirect_enabled = local.https_redirect_enabled
+  https_redirect_enabled = local.origin_groups[each.value.origin_group_name].https_redirect_enabled
   patterns_to_match      = ["/*"]
-  supported_protocols    = local.https_redirect_enabled ? ["Http", "Https"] : ["Http"]
+  supported_protocols    = local.origin_groups[each.value.origin_group_name].https_redirect_enabled ? ["Http", "Https"] : ["Http"]
 
   cdn_frontdoor_custom_domain_ids = [
-    for custom_domain in azurerm_cdn_frontdoor_custom_domain.custom_domain : custom_domain.id
+    for custom_domain in azurerm_cdn_frontdoor_custom_domain.custom_domain[each.value.name] : custom_domain.id
   ]
 
   link_to_default_domain = true
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain_association" "custom_domain_association" {
-  for_each = local.domain_map
+  for_each = try({ for domain in local.domain_map : domain.name => domain }, {})
 
-  cdn_frontdoor_custom_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[each.key].id
-  cdn_frontdoor_route_ids        = [for r in azurerm_cdn_frontdoor_route.route[each.key] : r.id]
+  cdn_frontdoor_custom_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[each.value.name].id
+  cdn_frontdoor_route_ids        = [for r in azurerm_cdn_frontdoor_route.route[each.value.name] : r.id]
 }
 
-resource "azurerm_cdn_frontdoor_rule_set" "redirects" {
-  count = length(local.host_redirects) > 0 ? 1 : 0
+# resource "azurerm_cdn_frontdoor_rule_set" "redirects" {
+#   count = length(local.host_redirects) > 0 ? 1 : 0
 
-  name                     = "${replace(local.resource_prefix, "-", "")}redirects"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
-}
+#   name                     = "${replace(local.resource_prefix, "-", "")}redirects"
+#   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+# }
 
-resource "azurerm_cdn_frontdoor_rule" "redirect" {
-  for_each = { for index, host_redirect in local.host_redirects : index => { "from" : host_redirect.from, "to" : host_redirect.to } }
+# resource "azurerm_cdn_frontdoor_rule" "redirect" {
+#   for_each = { for index, host_redirect in local.host_redirects : index => { "from" : host_redirect.from, "to" : host_redirect.to } }
 
-  depends_on = [azurerm_cdn_frontdoor_origin_group.group, azurerm_cdn_frontdoor_origin.origin]
+#   depends_on = [azurerm_cdn_frontdoor_origin_group.group, azurerm_cdn_frontdoor_origin.origin]
 
-  name                      = "redirect${each.key}"
-  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.redirects[0].id
-  order                     = each.key
-  behavior_on_match         = "Continue"
+#   name                      = "redirect${each.key}"
+#   cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.redirects[0].id
+#   order                     = each.key
+#   behavior_on_match         = "Continue"
 
-  actions {
-    url_redirect_action {
-      redirect_type        = "Moved"
-      redirect_protocol    = "Https"
-      destination_hostname = each.value.to
-    }
-  }
+#   actions {
+#     url_redirect_action {
+#       redirect_type        = "Moved"
+#       redirect_protocol    = "Https"
+#       destination_hostname = each.value.to
+#     }
+#   }
 
-  conditions {
-    host_name_condition {
-      operator         = "Equal"
-      negate_condition = false
-      match_values     = [each.value.from]
-      transforms       = ["Lowercase", "Trim"]
-    }
-  }
-}
+#   conditions {
+#     host_name_condition {
+#       operator         = "Equal"
+#       negate_condition = false
+#       match_values     = [each.value.from]
+#       transforms       = ["Lowercase", "Trim"]
+#     }
+#   }
+# }
 
-resource "azurerm_cdn_frontdoor_rule_set" "add_response_headers" {
-  count = length(local.host_add_response_headers) > 0 ? 1 : 0
+# resource "azurerm_cdn_frontdoor_rule_set" "add_response_headers" {
+#   count = length(local.host_add_response_headers) > 0 ? 1 : 0
 
-  name                     = "${replace(local.resource_prefix, "-", "")}addresponseheaders"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
-}
+#   name                     = "${replace(local.resource_prefix, "-", "")}addresponseheaders"
+#   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+# }
 
-resource "azurerm_cdn_frontdoor_rule" "add_response_headers" {
-  for_each = { for index, response_header in local.host_add_response_headers : index => { "name" : response_header.name, "value" : response_header.value } }
+# resource "azurerm_cdn_frontdoor_rule" "add_response_headers" {
+#   for_each = { for index, response_header in local.host_add_response_headers : index => { "name" : response_header.name, "value" : response_header.value } }
 
-  depends_on = [azurerm_cdn_frontdoor_origin_group.group, azurerm_cdn_frontdoor_origin.origin]
+#   depends_on = [azurerm_cdn_frontdoor_origin_group.group, azurerm_cdn_frontdoor_origin.origin]
 
-  name                      = replace("addresponseheaders${each.key}", "-", "")
-  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.add_response_headers[0].id
-  order                     = 0
-  behavior_on_match         = "Continue"
+#   name                      = replace("addresponseheaders${each.key}", "-", "")
+#   cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.add_response_headers[0].id
+#   order                     = 0
+#   behavior_on_match         = "Continue"
 
-  actions {
-    response_header_action {
-      header_action = "Overwrite"
-      header_name   = each.value.name
-      value         = each.value.value
-    }
-  }
-}
+#   actions {
+#     response_header_action {
+#       header_action = "Overwrite"
+#       header_name   = each.value.name
+#       value         = each.value.value
+#     }
+#   }
+# }
 
-resource "azurerm_cdn_frontdoor_rule_set" "remove_response_headers" {
-  count = length(local.remove_response_headers) > 0 ? 1 : 0
+# resource "azurerm_cdn_frontdoor_rule_set" "remove_response_headers" {
+#   count = length(local.remove_response_headers) > 0 ? 1 : 0
 
-  name                     = "${replace(local.resource_prefix, "-", "")}removeresponseheaders"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
-}
+#   name                     = "${replace(local.resource_prefix, "-", "")}removeresponseheaders"
+#   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+# }
 
-resource "azurerm_cdn_frontdoor_rule" "remove_response_header" {
-  for_each = toset(local.remove_response_headers)
+# resource "azurerm_cdn_frontdoor_rule" "remove_response_header" {
+#   for_each = toset(local.remove_response_headers)
 
-  depends_on = [azurerm_cdn_frontdoor_origin_group.group, azurerm_cdn_frontdoor_origin.origin]
+#   depends_on = [azurerm_cdn_frontdoor_origin_group.group, azurerm_cdn_frontdoor_origin.origin]
 
-  name                      = replace("removeresponseheader${each.value}", "-", "")
-  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.remove_response_headers[0].id
-  order                     = 0
-  behavior_on_match         = "Continue"
+#   name                      = replace("removeresponseheader${each.value}", "-", "")
+#   cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.remove_response_headers[0].id
+#   order                     = 0
+#   behavior_on_match         = "Continue"
 
-  actions {
-    response_header_action {
-      header_action = "Delete"
-      header_name   = each.value
-    }
-  }
-}
+#   actions {
+#     response_header_action {
+#       header_action = "Delete"
+#       header_name   = each.value
+#     }
+#   }
+# }
 
 resource "azurerm_cdn_frontdoor_secret" "frontdoor" {
   for_each = local.certificates
