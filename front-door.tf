@@ -87,7 +87,7 @@ resource "azurerm_cdn_frontdoor_route" "route" {
   supported_protocols    = each.value.https_redirect_enabled ? ["Http", "Https"] : ["Http"]
 
   cdn_frontdoor_custom_domain_ids = [
-    for domain in each.value.cdn_frontdoor_custom_domain_ids : azurerm_cdn_frontdoor_custom_domain.custom_domain[domain].id
+    for domain_id in each.value.cdn_frontdoor_custom_domain_ids : azurerm_cdn_frontdoor_custom_domain.custom_domain[domain_id].id
   ]
 
   link_to_default_domain = true

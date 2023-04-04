@@ -33,7 +33,7 @@ locals {
   route_map = flatten([for r, o in var.origin_groups : {
     cdn_frontdoor_origin_ids : [for origin in o.origins : "${r}${index(o.origins, origin)}"]
     https_redirect_enabled : try(o.https_redirect_enabled, true),
-    cdn_frontdoor_custom_domain_ids : [for domain in o.domains : domain]
+    cdn_frontdoor_custom_domain_ids : [for domain in o.domains : "${r}${index(o.domains, domain)}"]
     name : r,
     origin_group_name : r
   }])
