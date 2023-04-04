@@ -79,10 +79,10 @@ resource "azurerm_cdn_frontdoor_security_policy" "waf" {
         }
 
         dynamic "domain" {
-          for_each = local.custom_domains
+          for_each = try({ for domain in local.domain_map : domain.name => domain }, {})
 
           content {
-            cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[domain.key].id
+            cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[each.key].id
           }
         }
       }
