@@ -11,7 +11,6 @@ locals {
   alarm_latency_threshold_ms = var.alarm_latency_threshold_ms
   monitor_action_group_id    = var.monitor_action_group_id
   response_timeout           = var.response_timeout
-  /* */
 
   origin_groups = { for k, g in var.origin_groups : k => {
     enable_health_probe       = try(g.enable_health_probe, true)
@@ -38,15 +37,12 @@ locals {
     origin_group_name : r
   }])
 
-  /* */
-  custom_domains                     = var.custom_domains
   use_existing_key_vault             = var.use_existing_key_vault
   existing_key_vault_id              = var.existing_key_vault_id
   key_vault_id                       = local.use_existing_key_vault ? local.existing_key_vault_id : azurerm_key_vault.frontdoor[0].id
   key_vault_allow_ipv4_list          = var.key_vault_allow_ipv4_list
   key_vault_access_users             = toset(var.key_vault_access_users)
   certificates                       = var.certificates
-  https_redirect_enabled             = var.https_redirect_enabled
   host_redirects                     = var.host_redirects
   host_add_response_headers          = var.host_add_response_headers
   remove_response_headers            = var.remove_response_headers

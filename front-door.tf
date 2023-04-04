@@ -72,13 +72,13 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
 resource "azurerm_cdn_frontdoor_route" "route" {
   for_each = try({ for route in local.route_map : route.name => route }, {})
 
-  name                          = "${local.resource_prefix}route"
+  name                          = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
   cdn_frontdoor_origin_ids = [
     for origin in each.value.cdn_frontdoor_origin_ids : azurerm_cdn_frontdoor_origin.origin[origin].id
   ]
-  # cdn_frontdoor_rule_set_ids    = local.ruleset_ids
+  cdn_frontdoor_rule_set_ids    = local.ruleset_ids
   enabled = true
 
   forwarding_protocol    = "HttpsOnly"
