@@ -14,6 +14,8 @@ resource "azurerm_key_vault" "frontdoor" {
     default_action = "Deny"
     ip_rules       = local.key_vault_allow_ipv4_list
   }
+
+  tags = local.tags
 }
 
 resource "azurerm_key_vault_access_policy" "user" {
@@ -100,4 +102,6 @@ resource "azurerm_key_vault_certificate" "frontdoor" {
     contents = each.value.contents
     password = each.value.password
   }
+
+  tags = local.tags
 }
