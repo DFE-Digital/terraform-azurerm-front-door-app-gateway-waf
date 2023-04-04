@@ -1,5 +1,5 @@
 resource "azurerm_monitor_metric_alert" "latency" {
-  count = local.enable_latency_monitor ? 1 : 0
+  count = local.enable_latency_monitor && local.monitor_action_group_id != "" ? 1 : 0
 
   name                = "${azurerm_cdn_frontdoor_profile.cdn.name}-latency"
   resource_group_name = local.resource_group.name
@@ -18,12 +18,8 @@ resource "azurerm_monitor_metric_alert" "latency" {
     threshold = local.alarm_latency_threshold_ms
   }
 
-  dynamic "action" {
-    for_each = local.monitor_action_group_id != "" ? [1] : []
-
-    content {
-      action_group_id = local.monitor_action_group_id
-    }
+  action {
+    action_group_id = local.monitor_action_group_id
   }
 
   tags = local.tags

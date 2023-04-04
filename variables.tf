@@ -38,7 +38,7 @@ variable "enable_latency_monitor" {
 }
 
 variable "monitor_action_group_id" {
-  description = "Specify the Action Group ID that you want to send the Latency monitor alerts to"
+  description = "Specify the Action Group ID that you want to send the Latency monitor alerts to. Required if 'enable_latency_monitor' is true"
   type        = string
 }
 
