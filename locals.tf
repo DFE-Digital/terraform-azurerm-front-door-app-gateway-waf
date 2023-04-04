@@ -28,6 +28,7 @@ locals {
   domain_map = flatten([for k, o in var.origin_groups : [for _o in o.domains : {
     name : "${k}${index(o.domains, _o)}",
     host_name : _o,
+    route_name : k
   }]])
   route_map = flatten([for r, o in var.origin_groups : {
     cdn_frontdoor_origin_ids : [for origin in o.origins : "${r}${index(o.origins, origin)}"]

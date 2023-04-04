@@ -57,9 +57,9 @@ resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
-  for_each = try({ for domain in local.domain_map : domain.host_name => domain }, {})
+  for_each = try({ for domain in local.domain_map : domain.name => domain }, {})
 
-  name                     = "${local.resource_prefix}-${each.value.name}"
+  name                     = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
   host_name                = each.value.host_name
 
@@ -97,7 +97,7 @@ resource "azurerm_cdn_frontdoor_custom_domain_association" "custom_domain_associ
   for_each = try({ for domain in local.domain_map : domain.name => domain }, {})
 
   cdn_frontdoor_custom_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[each.value.name].id
-  cdn_frontdoor_route_ids        = [for r in azurerm_cdn_frontdoor_route.route[each.value.name] : r.id]
+  cdn_frontdoor_route_ids        = [for r in azurerm_cdn_frontdoor_route.route[each.value.route_name] : r.id]
 }
 
 resource "azurerm_cdn_frontdoor_rule_set" "redirects" {
