@@ -75,7 +75,7 @@ resource "azurerm_cdn_frontdoor_route" "route" {
   name                          = "${local.resource_prefix}route"
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
-  cdn_frontdoor_origin_ids      = [for o in azurerm_cdn_frontdoor_origin[each.value.origin_group_name].origin : o.id]
+  cdn_frontdoor_origin_ids      = [for o in azurerm_cdn_frontdoor_origin.origin[each.value.origin_group_name].origin : o.id]
   # cdn_frontdoor_rule_set_ids    = local.ruleset_ids
   enabled                       = true
 
