@@ -53,25 +53,11 @@ variable "response_timeout" {
   type        = number
   default     = 120
 }
-/* */
 
 variable "origin_groups" {
   description = ""
   type        = map(any)
   default     = {}
-}
-
-/* */
-variable "custom_domains" {
-  description = "Azure CDN Front Door custom domains. If they are within the DNS zone (optionally created), the Validation TXT records and ALIAS/CNAME records will be created"
-  type        = map(any)
-  default     = {}
-}
-
-variable "https_redirect_enabled" {
-  description = "Redirect all HTTP traffic to HTTPS"
-  type        = bool
-  default     = true
 }
 
 variable "use_existing_key_vault" {
