@@ -18,8 +18,12 @@ resource "azurerm_monitor_metric_alert" "latency" {
     threshold = local.alarm_latency_threshold_ms
   }
 
-  action {
-    action_group_id = local.monitor_action_group_id
+  dynamic "action" {
+    for_each = local.monitor_action_group_id != "" ? [1] : []
+
+    content {
+      action_group_id = local.monitor_action_group_id
+    }
   }
 
   tags = local.tags
