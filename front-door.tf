@@ -52,7 +52,9 @@ resource "azurerm_cdn_frontdoor_origin" "origin" {
 }
 
 resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
-  name                     = "${local.resource_prefix}cdnendpoint"
+  for_each = local.origin_groups
+
+  name                     = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
 
   tags = local.tags
@@ -75,7 +77,7 @@ resource "azurerm_cdn_frontdoor_route" "route" {
   for_each = try({ for route in local.route_map : route.name => route }, {})
 
   name                          = "${local.resource_prefix}-${each.key}"
-  cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint.id
+  cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint[each.value.origin_group_name].id
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
   cdn_frontdoor_origin_ids = [
     for origin in each.value.cdn_frontdoor_origin_ids : azurerm_cdn_frontdoor_origin.origin[origin].id

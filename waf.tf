@@ -74,8 +74,12 @@ resource "azurerm_cdn_frontdoor_security_policy" "waf" {
       association {
         patterns_to_match = ["/*"]
 
-        domain {
-          cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.endpoint.id
+        dynamic "domain" {
+          for_each = local.origin_groups
+
+          content {
+            cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.endpoint[domain.key].id
+          }
         }
 
         dynamic "domain" {
