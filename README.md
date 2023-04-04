@@ -107,5 +107,9 @@ module "azurerm_front_door_waf" {
 | Name | Description |
 |------|-------------|
 | <a name="output_azurerm_resource_group_default"></a> [azurerm\_resource\_group\_default](#output\_azurerm\_resource\_group\_default) | Default Azure Resource Group |
+| <a name="output_custom_domains"></a> [custom\_domains](#output\_custom\_domains) | List of all Custom Domain associations |
 | <a name="output_environment"></a> [environment](#output\_environment) | n/a |
+| <a name="output_origin_groups"></a> [origin\_groups](#output\_origin\_groups) | List of all Origin Groups |
+| <a name="output_origins"></a> [origins](#output\_origins) | List of all Origins |
+| <a name="output_routes"></a> [routes](#output\_routes) | List of all Routes |
 <!-- END_TF_DOCS -->
