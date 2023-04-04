@@ -21,12 +21,12 @@ locals {
     https_redirect_enabled    = try(g.https_redirect_enabled, true)
   } }
   origin_map = flatten([for k, o in var.origin_groups : [for _o in o.origins : {
-    name : k,
+    name : "${k}${index(o.origins, _o)}",
     host_name : _o,
     origin_group_name : k
   }]])
   domain_map = flatten([for k, o in var.origin_groups : [for _o in o.domains : {
-    name : k,
+    name : "${k}${index(o.domains, _o)}",
     host_name : _o,
   }]])
   route_map = flatten([for r, o in var.origin_groups : {
