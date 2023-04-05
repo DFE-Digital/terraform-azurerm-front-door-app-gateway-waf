@@ -114,26 +114,17 @@ variable "waf_rate_limiting_bypass_ip_list" {
   default     = []
 }
 
-variable "waf_enable_bot_protection" {
-  description = "Deploy a Bot Protection Policy on the Front Door WAF"
-  type        = bool
-  default     = false
-}
-
-variable "waf_use_preview_bot_ruleset" {
-  description = "Use the newer 'BotProtection' ruleset instead of the older 'Microsoft_BotManagerRuleSet' ruleset"
-  type        = bool
-  default     = true
-}
-
-variable "waf_enable_default_ruleset" {
-  description = "Deploy a Managed DRS Policy on the Front Door WAF"
-  type        = bool
-  default     = false
-}
-
-variable "waf_use_new_default_ruleset" {
-  description = "Use the newer 'DefaultRuleSet' ruleset instead of the older 'Microsoft_DefaultRuleSet' ruleset"
-  type        = bool
-  default     = true
+variable "waf_managed_rulesets" {
+  description = "Map of all Managed rules you want to apply including any overrides"
+  type        = map(any)
+  default = {
+    "BotProtection" : {
+      version : "preview-0.1",
+      action : "Block"
+    },
+    "DefaultRuleSet" : {
+      version : "1.0",
+      action : "Block"
+    }
+  }
 }

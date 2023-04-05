@@ -41,20 +41,30 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
   }
 
   dynamic "managed_rule" {
-    for_each = local.waf_enable_bot_protection ? [0] : []
-    content {
-      type    = local.waf_use_preview_bot_ruleset ? "BotProtection" : "Microsoft_BotManageRuleSet"
-      version = local.waf_use_preview_bot_ruleset ? "preview-0.1" : "1.0"
-      action  = local.waf_mode == "Prevention" ? "Block" : "Log"
-    }
-  }
+    for_each = local.waf_managed_rulesets
 
-  dynamic "managed_rule" {
-    for_each = local.waf_enable_default_ruleset ? [0] : []
     content {
-      type    = local.waf_use_new_default_ruleset ? "DefaultRuleSet" : "Microsoft_DefaultRuleSet"
-      version = local.waf_use_new_default_ruleset ? "1.0" : "2.1"
-      action  = local.waf_mode == "Prevention" ? "Block" : "Log"
+      type    = managed_rule.key
+      version = managed_rule.value["version"]
+      action  = managed_rule.value["action"]
+
+      dynamic "override" {
+        for_each = managed_rule.value["overrides"]
+
+        content {
+          rule_group_name = override.key
+
+          dynamic "rule" {
+            for_each = override.value
+
+            content {
+              rule_id = rule.value["id"]
+              enabled = lookup(rule.value, "enabled", true)
+              action  = rule.value["action"]
+            }
+          }
+        }
+      }
     }
   }
 

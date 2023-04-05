@@ -138,15 +138,12 @@ module "azurerm_front_door_waf" {
 | <a name="input_response_timeout"></a> [response\_timeout](#input\_response\_timeout) | Azure CDN Front Door response timeout in seconds | `number` | `120` | no |
 | <a name="input_sku"></a> [sku](#input\_sku) | Azure CDN Front Door SKU | `string` | `"Standard_AzureFrontDoor"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to be applied to all resources | `map(string)` | `{}` | no |
-| <a name="input_waf_enable_bot_protection"></a> [waf\_enable\_bot\_protection](#input\_waf\_enable\_bot\_protection) | Deploy a Bot Protection Policy on the Front Door WAF | `bool` | `false` | no |
-| <a name="input_waf_enable_default_ruleset"></a> [waf\_enable\_default\_ruleset](#input\_waf\_enable\_default\_ruleset) | Deploy a Managed DRS Policy on the Front Door WAF | `bool` | `false` | no |
 | <a name="input_waf_enable_rate_limiting"></a> [waf\_enable\_rate\_limiting](#input\_waf\_enable\_rate\_limiting) | Deploy a Rate Limiting Policy on the Front Door WAF | `bool` | `false` | no |
+| <a name="input_waf_managed_rulesets"></a> [waf\_managed\_rulesets](#input\_waf\_managed\_rulesets) | Map of all Managed rules you want to apply including any overrides | `map(any)` | <pre>{<br>  "BotProtection": {<br>    "action": "Block",<br>    "version": "preview-0.1"<br>  },<br>  "DefaultRuleSet": {<br>    "action": "Block",<br>    "version": "1.0"<br>  }<br>}</pre> | no |
 | <a name="input_waf_mode"></a> [waf\_mode](#input\_waf\_mode) | CDN Front Door WAF mode | `string` | `"Prevention"` | no |
 | <a name="input_waf_rate_limiting_bypass_ip_list"></a> [waf\_rate\_limiting\_bypass\_ip\_list](#input\_waf\_rate\_limiting\_bypass\_ip\_list) | List if IP CIDRs to bypass the Rate Limit Policy | `list(string)` | `[]` | no |
 | <a name="input_waf_rate_limiting_duration_in_minutes"></a> [waf\_rate\_limiting\_duration\_in\_minutes](#input\_waf\_rate\_limiting\_duration\_in\_minutes) | Number of minutes to BLOCK requests that hit the Rate Limit threshold | `number` | `1` | no |
 | <a name="input_waf_rate_limiting_threshold"></a> [waf\_rate\_limiting\_threshold](#input\_waf\_rate\_limiting\_threshold) | Maximum number of concurrent requests before Rate Limiting policy is applied | `number` | `300` | no |
-| <a name="input_waf_use_new_default_ruleset"></a> [waf\_use\_new\_default\_ruleset](#input\_waf\_use\_new\_default\_ruleset) | Use the newer 'DefaultRuleSet' ruleset instead of the older 'Microsoft\_DefaultRuleSet' ruleset | `bool` | `true` | no |
-| <a name="input_waf_use_preview_bot_ruleset"></a> [waf\_use\_preview\_bot\_ruleset](#input\_waf\_use\_preview\_bot\_ruleset) | Use the newer 'BotProtection' ruleset instead of the older 'Microsoft\_BotManagerRuleSet' ruleset | `bool` | `true` | no |
 
 ## Outputs
 
