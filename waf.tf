@@ -1,16 +1,15 @@
 resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
-  count = local.enable_waf ? 1 : 0
-
   name                              = "${replace(local.resource_prefix, "-", "")}waf"
   resource_group_name               = local.resource_group.name
   sku_name                          = azurerm_cdn_frontdoor_profile.cdn.sku_name
-  enabled                           = true
+  enabled                           = local.enable_waf
   mode                              = local.waf_mode
   custom_block_response_status_code = 403
   custom_block_response_body        = filebase64("${path.module}/html/403.html")
 
   dynamic "custom_rule" {
-    for_each = local.waf_enable_rate_limiting ? [0] : []
+    for_each = local.waf_enable_rate_limiting ? [1] : []
+
     content {
       name                           = "RateLimiting"
       enabled                        = true
@@ -21,7 +20,7 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
       action                         = local.waf_mode == "Prevention" ? "Block" : "Log"
 
       dynamic "match_condition" {
-        for_each = length(local.waf_rate_limiting_bypass_ip_list) > 0 ? [0] : []
+        for_each = length(local.waf_rate_limiting_bypass_ip_list) > 0 ? [1] : []
 
         content {
           match_variable     = "RemoteAddr"
@@ -72,14 +71,12 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
 }
 
 resource "azurerm_cdn_frontdoor_security_policy" "waf" {
-  count = local.enable_waf ? 1 : 0
-
   name                     = "${replace(local.resource_prefix, "-", "")}wafsecuritypolicy"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
 
   security_policies {
     firewall {
-      cdn_frontdoor_firewall_policy_id = azurerm_cdn_frontdoor_firewall_policy.waf[0].id
+      cdn_frontdoor_firewall_policy_id = azurerm_cdn_frontdoor_firewall_policy.waf.id
 
       association {
         patterns_to_match = ["/*"]
