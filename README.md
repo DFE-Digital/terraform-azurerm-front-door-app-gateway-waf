@@ -13,7 +13,69 @@ Example module usage:
 module "azurerm_front_door_waf" {
   source  = "github.com/dfe-digital/terraform-azuerm-front-door-waf?ref=v0.1.0"
 
-  environment = "dev"
+  environment    = "dev"
+  project_name   = "frontdoor"
+  azure_location = "uksouth"
+
+  sku                     = "Premium_AzureFrontDoor" # or "Standard_AzureFrontDoor"
+  response_timeout        = 60 # seconds
+  enable_latency_monitor  = true
+  ## Action Group ID
+  # monitor_action_group_id = "/xxx/abcdefg"
+
+  origin_groups = {
+    "first-origin-group" = {
+      origins = [
+        "my-origin.hostname"
+      ],
+      domains                   = [
+        "my-custom.domain.tld
+      ]
+      enable_health_probe       = true
+      health_probe_interval     = 60
+      health_probe_request_type = "HEAD"
+      health_probe_path         = "/"
+    },
+    "second-origin-group" = {
+      origins = [
+        "second-origin.hostname"
+      ],
+      domains                   = [
+        "second-custom.domain.tld
+      ]
+      enable_health_probe       = true
+      health_probe_interval     = 60
+      health_probe_request_type = "GET"
+      health_probe_path         = "/healthcheck"
+    },
+  }
+
+  certificates = {
+    "certificate0": {
+      password : "xyz,
+      contents : filebase64(abspath("/path/to/file.pfx"))
+    }
+  }
+
+  key_vault_access_users = [
+    "my.email_domain.tld#EXT#@platformidentity.onmicrosoft.com",
+  ]
+
+  key_vault_allow_ipv4_list = [
+    "8.8.8.8", # Replace with a trusted IP range
+  ]
+
+  enable_waf                            = true
+  waf_enable_rate_limiting              = true
+  waf_rate_limiting_duration_in_minutes = 5
+  waf_rate_limiting_threshold           = 1000
+  waf_rate_limiting_bypass_ip_list      = []
+  waf_enable_bot_protection             = true
+  waf_enable_default_ruleset            = true
+
+  tags = {
+    "Environment"      = "Dev"
+  }
 }
 ```
 
