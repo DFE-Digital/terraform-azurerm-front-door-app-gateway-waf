@@ -6,18 +6,6 @@ resource "azurerm_cdn_frontdoor_profile" "cdn" {
   tags                     = local.tags
 }
 
-resource "azapi_update_resource" "frontdoor_system_identity" {
-  type        = "Microsoft.Cdn/profiles@2023-02-01-preview"
-  resource_id = azurerm_cdn_frontdoor_profile.cdn.id
-  body = jsonencode({
-    "identity" : {
-      "type" : "SystemAssigned"
-    }
-  })
-
-  response_export_values = ["identity.principalId"]
-}
-
 resource "azurerm_cdn_frontdoor_origin_group" "group" {
   for_each = local.origin_groups
 
