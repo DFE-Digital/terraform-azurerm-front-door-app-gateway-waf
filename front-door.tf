@@ -1,5 +1,5 @@
-resource "azurerm_cdn_frontdoor_profile" "cdn" {
-  name                     = "${local.resource_prefix}cdn"
+resource "azurerm_cdn_frontdoor_profile" "waf" {
+  name                     = "${local.resource_prefix}cdnwaf"
   resource_group_name      = local.resource_group.name
   sku_name                 = local.sku
   response_timeout_seconds = local.response_timeout
@@ -10,7 +10,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "group" {
   for_each = local.origin_groups
 
   name                     = "${local.resource_prefix}-${each.key}"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
 
   load_balancing {}
 
@@ -43,7 +43,7 @@ resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
   for_each = local.origin_groups
 
   name                     = "${local.resource_prefix}-${each.key}"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
 
   tags = local.tags
 }
@@ -52,7 +52,7 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
   for_each = try({ for domain in local.domain_map : domain.name => domain }, {})
 
   name                     = "${local.resource_prefix}-${each.key}"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
   host_name                = each.value.host_name
 
   tls {

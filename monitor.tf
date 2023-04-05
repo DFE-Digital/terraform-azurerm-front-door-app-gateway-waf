@@ -1,9 +1,9 @@
 resource "azurerm_monitor_metric_alert" "latency" {
   count = local.enable_latency_monitor && local.monitor_action_group_id != "" ? 1 : 0
 
-  name                = "${azurerm_cdn_frontdoor_profile.cdn.name}-latency"
+  name                = "${azurerm_cdn_frontdoor_profile.waf.name}-latency"
   resource_group_name = local.resource_group.name
-  scopes              = [azurerm_cdn_frontdoor_profile.cdn.id]
+  scopes              = [azurerm_cdn_frontdoor_profile.waf.id]
   description         = "Action will be triggered when Origin latency is higher than ${local.alarm_latency_threshold_ms}ms"
   window_size         = "PT5M"
   frequency           = "PT5M"

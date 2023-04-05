@@ -2,7 +2,7 @@ resource "azurerm_cdn_frontdoor_rule_set" "redirects" {
   count = length(local.host_redirects) > 0 ? 1 : 0
 
   name                     = "${replace(local.resource_prefix, "-", "")}redirects"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
 }
 
 resource "azurerm_cdn_frontdoor_rule" "redirect" {
@@ -37,7 +37,7 @@ resource "azurerm_cdn_frontdoor_rule_set" "add_response_headers" {
   count = length(local.host_add_response_headers) > 0 ? 1 : 0
 
   name                     = "${replace(local.resource_prefix, "-", "")}addresponseheaders"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
 }
 
 resource "azurerm_cdn_frontdoor_rule" "add_response_headers" {
@@ -63,7 +63,7 @@ resource "azurerm_cdn_frontdoor_rule_set" "remove_response_headers" {
   count = length(local.remove_response_headers) > 0 ? 1 : 0
 
   name                     = "${replace(local.resource_prefix, "-", "")}removeresponseheaders"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
 }
 
 resource "azurerm_cdn_frontdoor_rule" "remove_response_header" {

@@ -1,7 +1,7 @@
 resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
   name                              = "${replace(local.resource_prefix, "-", "")}waf"
   resource_group_name               = local.resource_group.name
-  sku_name                          = azurerm_cdn_frontdoor_profile.cdn.sku_name
+  sku_name                          = azurerm_cdn_frontdoor_profile.waf.sku_name
   enabled                           = local.enable_waf
   mode                              = local.waf_mode
   custom_block_response_status_code = 403
@@ -72,7 +72,7 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
 
 resource "azurerm_cdn_frontdoor_security_policy" "waf" {
   name                     = "${replace(local.resource_prefix, "-", "")}wafsecuritypolicy"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
 
   security_policies {
     firewall {
