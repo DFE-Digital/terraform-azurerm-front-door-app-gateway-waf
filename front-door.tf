@@ -27,13 +27,13 @@ resource "azurerm_cdn_frontdoor_origin_group" "group" {
   load_balancing {}
 
   dynamic "health_probe" {
-    for_each = each.value.enable_health_probe ? [0] : []
+    for_each = lookup(each.value, "enable_health_probe", true) ? [1] : []
 
     content {
       protocol            = "Https"
-      interval_in_seconds = each.value.health_probe_interval
-      request_type        = each.value.health_probe_request_type
-      path                = each.value.health_probe_path
+      interval_in_seconds = lookup(each.value, "health_probe_interval", 60)
+      request_type        = lookup(each.value, "health_probe_request_type", "HEAD")
+      path                = lookup(each.value, "health_probe_path", "/")
     }
   }
 }
@@ -86,9 +86,9 @@ resource "azurerm_cdn_frontdoor_route" "route" {
   enabled                    = true
 
   forwarding_protocol    = "HttpsOnly"
-  https_redirect_enabled = each.value.https_redirect_enabled
+  https_redirect_enabled = lookup(each.value, "https_redirect_enabled", true)
   patterns_to_match      = ["/*"]
-  supported_protocols    = each.value.https_redirect_enabled ? ["Http", "Https"] : ["Http"]
+  supported_protocols    = lookup(each.value, "https_redirect_enabled", true) ? ["Http", "Https"] : ["Http"]
 
   cdn_frontdoor_custom_domain_ids = [
     for domain_id in each.value.cdn_frontdoor_custom_domain_ids : azurerm_cdn_frontdoor_custom_domain.custom_domain[domain_id].id

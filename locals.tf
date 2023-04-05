@@ -12,13 +12,7 @@ locals {
   monitor_action_group_id    = var.monitor_action_group_id
   response_timeout           = var.response_timeout
 
-  origin_groups = { for k, g in var.origin_groups : k => {
-    enable_health_probe       = try(g.enable_health_probe, true)
-    health_probe_interval     = try(g.health_probe_interval, 60)
-    health_probe_request_type = try(g.health_probe_request_type, "HEAD")
-    health_probe_path         = try(g.health_probe_path, "/")
-    https_redirect_enabled    = try(g.https_redirect_enabled, true)
-  } }
+  origin_groups = var.origin_groups
   origin_map = flatten([for k, o in var.origin_groups : [for _o in o.origins : {
     name : "${k}${index(o.origins, _o)}",
     host_name : _o,
