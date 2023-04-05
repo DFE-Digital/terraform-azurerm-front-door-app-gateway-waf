@@ -49,7 +49,7 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
       action  = managed_rule.value["action"]
 
       dynamic "override" {
-        for_each = managed_rule.value["overrides"]
+        for_each = lookup(managed_rule.value, "overrides", [])
 
         content {
           rule_group_name = override.key
