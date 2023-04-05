@@ -31,12 +31,6 @@ locals {
     origin_group_name : r
   }])
 
-  use_existing_key_vault             = var.use_existing_key_vault
-  existing_key_vault_id              = var.existing_key_vault_id
-  key_vault_id                       = local.use_existing_key_vault ? local.existing_key_vault_id : azurerm_key_vault.frontdoor[0].id
-  key_vault_allow_ipv4_list          = var.key_vault_allow_ipv4_list
-  key_vault_access_users             = toset(var.key_vault_access_users)
-  certificates                       = var.certificates
   host_redirects                     = var.host_redirects
   host_add_response_headers          = var.host_add_response_headers
   remove_response_headers            = var.remove_response_headers

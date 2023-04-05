@@ -60,36 +60,6 @@ variable "origin_groups" {
   default     = {}
 }
 
-variable "use_existing_key_vault" {
-  description = "Use an existing Key Vault to store a Customer managed Certificate"
-  type        = bool
-  default     = false
-}
-
-variable "existing_key_vault_id" {
-  description = "The ID of an existing Key Vault. Must be defined if 'use_existing_key_vault' is true"
-  type        = string
-  default     = ""
-}
-
-variable "key_vault_allow_ipv4_list" {
-  description = "A list of IPv4 addresses to permit access to the Key Vault that holds the TLS Certificates"
-  type        = list(string)
-  default     = []
-}
-
-variable "key_vault_access_users" {
-  description = "A list of Azure AD Users that are granted Secret & Certificate management permissions to the Key Vault"
-  type        = list(string)
-  default     = []
-}
-
-variable "certificates" {
-  description = "Customer managed certificates (.pfx)"
-  type        = map(any)
-  default     = {}
-}
-
 variable "host_redirects" {
   description = "CDN FrontDoor host redirects `[{ \"from\" = \"example.com\", \"to\" = \"www.example.com\" }]`"
   type        = list(map(string))

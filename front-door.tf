@@ -103,21 +103,3 @@ resource "azurerm_cdn_frontdoor_custom_domain_association" "custom_domain_associ
   cdn_frontdoor_custom_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[each.value.name].id
   cdn_frontdoor_route_ids        = [azurerm_cdn_frontdoor_route.route[each.value.route_name].id]
 }
-
-resource "azurerm_cdn_frontdoor_secret" "frontdoor" {
-  for_each = local.certificates
-
-  name                     = "${local.resource_prefix}secret${each.key}"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.cdn.id
-
-  secret {
-    customer_certificate {
-      key_vault_certificate_id = azurerm_key_vault_certificate.frontdoor[each.key].versionless_id # latest
-    }
-  }
-
-  # Can't set the Secret unless we have the correct permission set first
-  depends_on = [
-    azurerm_key_vault_access_policy.user
-  ]
-}
