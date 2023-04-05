@@ -1,6 +1,74 @@
-<html>
-<header><title>Forbidden</title></header>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forbidden</title>
+
+  <style>
+    *, *:before, *:after {
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    body {
+      background-color: #f3f2f1;
+      height: 100%;
+      padding: 10px;
+      line-height: 1.2;
+      color: #0b0c0c;
+      font-family: arial,sans-serif;
+      position: relative;
+    }
+
+    .wrapper {
+      border-radius: 3px;
+      background: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateY(-50%) translateX(-50%);
+      width: 95%;
+      max-width: 640px;
+      margin: 0 auto;
+      box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .inner {
+      background: #1d70b8;
+      color: white;
+      padding: 1rem;
+      border-radius: 3px 3px 0 0;
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    footer {
+      padding: 1rem;
+      padding-top: 0rem;
+      border-radius: 0 0 3px 3px;
+    }
+  </style>
+</head>
 <body>
-Forbidden
+  <div class="wrapper">
+    <div class="inner">
+      <h1>Request blocked</h1>
+      <p>Your request cannot be completed.</p>
+    </div>
+    <footer>
+      <p>Please contact us directly and include the reference code below if you believe you are seeing this in error.</p>
+      <code>Reference: {{azure-ref}}</code>
+    </footer>
+  </div>
 </body>
 </html>
