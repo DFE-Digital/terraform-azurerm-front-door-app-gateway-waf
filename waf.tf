@@ -48,7 +48,7 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
       action  = managed_rule.value["action"]
 
       dynamic "override" {
-        for_each = lookup(managed_rule.value, "overrides", [])
+        for_each = lookup(managed_rule.value, "overrides", {})
 
         content {
           rule_group_name = override.key
@@ -57,9 +57,19 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
             for_each = override.value
 
             content {
-              rule_id = rule.value["id"]
-              enabled = lookup(rule.value, "enabled", true)
+              rule_id = rule.key
+              enabled = true
               action  = rule.value["action"]
+
+              dynamic "exclusion" {
+                for_each = lookup(rule.value, "exclusions", [])
+
+                content {
+                  match_variable = exclusion.value["match_variable"]
+                  operator       = exclusion.value["operator"]
+                  selector       = exclusion.value["selector"]
+                }
+              }
             }
           }
         }
