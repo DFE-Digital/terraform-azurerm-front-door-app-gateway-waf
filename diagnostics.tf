@@ -11,7 +11,7 @@ resource "azurerm_monitor_diagnostic_setting" "waf" {
   name                           = "${local.resource_prefix}waf"
   target_resource_id             = azurerm_cdn_frontdoor_profile.waf.id
   log_analytics_workspace_id     = azurerm_log_analytics_workspace.waf.id
-  log_analytics_destination_type = "Dedicated"
+  log_analytics_destination_type = "AzureDiagnostics"
 
   enabled_log {
     category = "FrontdoorWebApplicationFirewallLog"
