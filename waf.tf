@@ -39,6 +39,29 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
     }
   }
 
+  dynamic "custom_rule" {
+    for_each = local.waf_custom_rules
+
+    content {
+      name     = custom_rule.key
+      enabled  = true
+      priority = custom_rule.value["priority"]
+      type     = "MatchRule"
+      action   = custom_rule.value["action"]
+
+      dynamic "match_condition" {
+        for_each = custom_rule.value["conditions"]
+
+        content {
+          match_variable = match_condition.value["variable"]
+          match_values   = match_condition.value["values"]
+          operator       = match_condition.value["operator"]
+          selector       = lookup(match_condition.value, "selector", "")
+        }
+      }
+    }
+  }
+
   dynamic "managed_rule" {
     for_each = local.waf_managed_rulesets
 

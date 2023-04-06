@@ -115,7 +115,7 @@ variable "waf_rate_limiting_bypass_ip_list" {
 }
 
 variable "waf_managed_rulesets" {
-  description = "Map of all Managed rules you want to apply including any overrides"
+  description = "Map of all Managed rules you want to apply to the WAF, including any overrides"
   type        = map(any)
   default = {
     "BotProtection" : {
@@ -127,4 +127,10 @@ variable "waf_managed_rulesets" {
       action : "Block"
     }
   }
+}
+
+variable "waf_custom_rules" {
+  description = "Map of all Custom rules you want to apply to the WAF"
+  type        = map(any)
+  default     = {}
 }
