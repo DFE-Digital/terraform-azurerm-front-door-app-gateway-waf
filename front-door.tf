@@ -7,7 +7,7 @@ resource "azurerm_cdn_frontdoor_profile" "waf" {
 }
 
 resource "azurerm_cdn_frontdoor_origin_group" "group" {
-  for_each = local.origin_groups
+  for_each = local.endpoints
 
   name                     = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
@@ -27,7 +27,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "group" {
 }
 
 resource "azurerm_cdn_frontdoor_origin" "origin" {
-  for_each = try({ for origin in local.origin_map : origin.name => origin }, {})
+  for_each = try({ for origin in local.targets : origin.name => origin }, {})
 
   name                           = "${local.resource_prefix}origin-${each.key}"
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.group[each.value.origin_group_name].id
@@ -40,7 +40,7 @@ resource "azurerm_cdn_frontdoor_origin" "origin" {
 }
 
 resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
-  for_each = local.origin_groups
+  for_each = local.endpoints
 
   name                     = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
@@ -49,7 +49,7 @@ resource "azurerm_cdn_frontdoor_endpoint" "endpoint" {
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
-  for_each = try({ for domain in local.domain_map : domain.name => domain }, {})
+  for_each = try({ for domain in local.domains : domain.name => domain }, {})
 
   name                     = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
@@ -62,7 +62,7 @@ resource "azurerm_cdn_frontdoor_custom_domain" "custom_domain" {
 }
 
 resource "azurerm_cdn_frontdoor_route" "route" {
-  for_each = try({ for route in local.route_map : route.name => route }, {})
+  for_each = try({ for route in local.routes : route.name => route }, {})
 
   name                          = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.endpoint[each.value.origin_group_name].id
@@ -86,7 +86,7 @@ resource "azurerm_cdn_frontdoor_route" "route" {
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain_association" "custom_domain_association" {
-  for_each = try({ for domain in local.domain_map : domain.name => domain }, {})
+  for_each = try({ for domain in local.domains : domain.name => domain }, {})
 
   cdn_frontdoor_custom_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[each.value.name].id
   cdn_frontdoor_route_ids        = [azurerm_cdn_frontdoor_route.route[each.value.route_name].id]

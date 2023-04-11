@@ -115,7 +115,7 @@ resource "azurerm_cdn_frontdoor_security_policy" "waf" {
         patterns_to_match = ["/*"]
 
         dynamic "domain" {
-          for_each = local.origin_groups
+          for_each = local.endpoints
 
           content {
             cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_endpoint.endpoint[domain.key].id
@@ -123,7 +123,7 @@ resource "azurerm_cdn_frontdoor_security_policy" "waf" {
         }
 
         dynamic "domain" {
-          for_each = try({ for domain in local.domain_map : domain.name => domain }, {})
+          for_each = try({ for domain in local.domains : domain.name => domain }, {})
 
           content {
             cdn_frontdoor_domain_id = azurerm_cdn_frontdoor_custom_domain.custom_domain[domain.key].id

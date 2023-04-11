@@ -7,7 +7,7 @@ output "azurerm_resource_group_default" {
   description = "Default Azure Resource Group"
 }
 
-output "origin_groups" {
+output "endpoints" {
   value       = azurerm_cdn_frontdoor_origin_group.group
   description = "List of all Origin Groups"
 }

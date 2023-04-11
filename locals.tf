@@ -12,19 +12,19 @@ locals {
   monitor_action_group_id    = var.monitor_action_group_id
   response_timeout           = var.response_timeout
 
-  origin_groups = var.origin_groups
-  origin_map = flatten([for k, o in var.origin_groups : [for _o in o.origins : {
-    name : "${k}${index(o.origins, _o)}",
+  endpoints = var.endpoints
+  targets = flatten([for k, o in var.endpoints : [for _o in o.targets : {
+    name : "${k}${index(o.targets, _o)}",
     host_name : _o,
     origin_group_name : k
   }]])
-  domain_map = flatten([for k, o in var.origin_groups : [for _o in o.domains : {
+  domains = flatten([for k, o in var.endpoints : [for _o in o.domains : {
     name : "${k}${index(o.domains, _o)}",
     host_name : _o,
     route_name : k
   }]])
-  route_map = flatten([for r, o in var.origin_groups : {
-    cdn_frontdoor_origin_ids : [for origin in o.origins : "${r}${index(o.origins, origin)}"]
+  routes = flatten([for r, o in var.endpoints : {
+    cdn_frontdoor_origin_ids : [for origin in o.targets : "${r}${index(o.targets, origin)}"]
     https_redirect_enabled : try(o.https_redirect_enabled, true),
     cdn_frontdoor_custom_domain_ids : [for domain in o.domains : "${r}${index(o.domains, domain)}"]
     name : r,

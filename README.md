@@ -23,7 +23,7 @@ module "azurerm_front_door_waf" {
   ## Action Group ID
   # monitor_action_group_id = "/xxx/abcdefg"
 
-  origin_groups = {
+  endpoints = {
     "first-origin-group" = {
       origins = [
         "my-origin.hostname"
@@ -126,12 +126,12 @@ module "azurerm_front_door_waf" {
 | <a name="input_azure_location"></a> [azure\_location](#input\_azure\_location) | Azure location in which to launch resources. | `string` | n/a | yes |
 | <a name="input_enable_latency_monitor"></a> [enable\_latency\_monitor](#input\_enable\_latency\_monitor) | Monitor latency between the Front Door and it's origin | `bool` | `true` | no |
 | <a name="input_enable_waf"></a> [enable\_waf](#input\_enable\_waf) | Enable CDN Front Door WAF | `bool` | `false` | no |
+| <a name="input_endpoints"></a> [endpoints](#input\_endpoints) | n/a | `map(any)` | `{}` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment name. Will be used along with `project_name` as a prefix for all resources. | `string` | n/a | yes |
 | <a name="input_existing_resource_group"></a> [existing\_resource\_group](#input\_existing\_resource\_group) | Conditionally launch resources into an existing resource group. Specifying this will NOT create a resource group. | `string` | `""` | no |
 | <a name="input_host_add_response_headers"></a> [host\_add\_response\_headers](#input\_host\_add\_response\_headers) | List of response headers to add at the CDN Front Door `[{ "Name" = "Strict-Transport-Security", "value" = "max-age=31536000" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_host_redirects"></a> [host\_redirects](#input\_host\_redirects) | CDN FrontDoor host redirects `[{ "from" = "example.com", "to" = "www.example.com" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_monitor_action_group_id"></a> [monitor\_action\_group\_id](#input\_monitor\_action\_group\_id) | Specify the Action Group ID that you want to send the Latency monitor alerts to. Required if 'enable\_latency\_monitor' is true | `string` | n/a | yes |
-| <a name="input_origin_groups"></a> [origin\_groups](#input\_origin\_groups) | n/a | `map(any)` | `{}` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Project name. Will be used along with `environment` as a prefix for all resources. | `string` | n/a | yes |
 | <a name="input_remove_response_headers"></a> [remove\_response\_headers](#input\_remove\_response\_headers) | List of response headers to remove at the CDN Front Door | `list(string)` | `[]` | no |
 | <a name="input_response_timeout"></a> [response\_timeout](#input\_response\_timeout) | Azure CDN Front Door response timeout in seconds | `number` | `120` | no |
@@ -151,8 +151,8 @@ module "azurerm_front_door_waf" {
 |------|-------------|
 | <a name="output_azurerm_resource_group_default"></a> [azurerm\_resource\_group\_default](#output\_azurerm\_resource\_group\_default) | Default Azure Resource Group |
 | <a name="output_custom_domains"></a> [custom\_domains](#output\_custom\_domains) | List of all Custom Domain associations |
+| <a name="output_endpoints"></a> [endpoints](#output\_endpoints) | List of all Origin Groups |
 | <a name="output_environment"></a> [environment](#output\_environment) | n/a |
-| <a name="output_origin_groups"></a> [origin\_groups](#output\_origin\_groups) | List of all Origin Groups |
 | <a name="output_origins"></a> [origins](#output\_origins) | List of all Origins |
 | <a name="output_routes"></a> [routes](#output\_routes) | List of all Routes |
 <!-- END_TF_DOCS -->

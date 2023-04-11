@@ -54,7 +54,7 @@ variable "response_timeout" {
   default     = 120
 }
 
-variable "origin_groups" {
+variable "endpoints" {
   description = ""
   type        = map(any)
   default     = {}
