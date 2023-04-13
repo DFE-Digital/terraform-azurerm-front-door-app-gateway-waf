@@ -42,7 +42,7 @@ resource "azurerm_cdn_frontdoor_origin" "waf" {
 resource "azurerm_cdn_frontdoor_endpoint" "waf" {
   for_each = local.cdn_waf_targets
 
-  name                     = "${local.resource_prefix}-${each.key}"
+  name                     = substr("${local.resource_prefix}-${each.key}", 0, 46)
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
 
   tags = local.tags
