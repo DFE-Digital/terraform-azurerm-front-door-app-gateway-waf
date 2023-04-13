@@ -51,3 +51,21 @@ variable "cdn_waf_targets" {
   )
   default = {}
 }
+
+variable "cdn_host_redirects" {
+  description = "CDN FrontDoor host redirects `[{ \"from\" = \"example.com\", \"to\" = \"www.example.com\" }]`"
+  type        = list(map(string))
+  default     = []
+}
+
+variable "cdn_host_add_response_headers" {
+  description = "List of response headers to add at the CDN Front Door `[{ \"Name\" = \"Strict-Transport-Security\", \"value\" = \"max-age=31536000\" }]`"
+  type        = list(map(string))
+  default     = []
+}
+
+variable "cdn_remove_response_headers" {
+  description = "List of response headers to remove at the CDN Front Door"
+  type        = list(string)
+  default     = []
+}

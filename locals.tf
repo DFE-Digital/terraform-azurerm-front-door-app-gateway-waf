@@ -11,7 +11,10 @@ locals {
   cdn_custom_domains = {
     for cdn_waf_target_name, cdn_waf_target_value in local.cdn_waf_targets : cdn_waf_target_name => cdn_waf_target_value.fqdn if cdn_waf_target_value.create_custom_domain
   }
-  cdn_response_timeout = var.cdn_response_timeout
+  cdn_response_timeout          = var.cdn_response_timeout
+  cdn_host_redirects            = var.cdn_host_redirects
+  cdn_host_add_response_headers = var.cdn_host_add_response_headers
+  cdn_remove_response_headers   = var.cdn_remove_response_headers
 
   tags = var.tags
 }
