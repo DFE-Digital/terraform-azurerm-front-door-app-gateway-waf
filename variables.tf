@@ -69,3 +69,21 @@ variable "cdn_remove_response_headers" {
   type        = list(string)
   default     = []
 }
+
+variable "existing_monitor_action_group_id" {
+  description = "ID of an existing monitor action group"
+  type        = string
+  default     = ""
+}
+
+variable "enable_cdn_latency_monitor" {
+  description = "Enable CDN latency monitor"
+  type        = bool
+  default     = false
+}
+
+variable "cdn_latency_monitor_threshold" {
+  description = "CDN latency monitor threshold in milliseconds"
+  type        = number
+  default     = 5000
+}
