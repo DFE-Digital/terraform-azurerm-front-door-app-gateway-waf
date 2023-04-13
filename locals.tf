@@ -16,5 +16,9 @@ locals {
   cdn_host_add_response_headers = var.cdn_host_add_response_headers
   cdn_remove_response_headers   = var.cdn_remove_response_headers
 
+  existing_monitor_action_group_id = var.existing_monitor_action_group_id
+  enable_cdn_latency_monitor       = var.enable_cdn_latency_monitor
+  cdn_latency_monitor_threshold    = var.cdn_latency_monitor_threshold
+
   tags = var.tags
 }
