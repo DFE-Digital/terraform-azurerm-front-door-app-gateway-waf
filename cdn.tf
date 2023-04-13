@@ -1,5 +1,5 @@
 resource "azurerm_cdn_frontdoor_profile" "waf" {
-  name                     = "${local.resource_prefix}cdnwaf"
+  name                     = "${local.resource_prefix}-cdnwaf"
   resource_group_name      = local.resource_group.name
   sku_name                 = local.cdn_sku
   response_timeout_seconds = local.cdn_response_timeout
