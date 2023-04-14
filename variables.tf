@@ -87,3 +87,94 @@ variable "cdn_latency_monitor_threshold" {
   type        = number
   default     = 5000
 }
+
+variable "enable_waf" {
+  description = "Enable CDN Front Door WAF"
+  type        = bool
+  default     = false
+}
+
+variable "waf_mode" {
+  description = "CDN Front Door WAF mode"
+  type        = string
+  default     = "Prevention"
+}
+
+variable "waf_enable_rate_limiting" {
+  description = "Deploy a Rate Limiting Policy on the Front Door WAF"
+  type        = bool
+  default     = false
+}
+
+variable "waf_rate_limiting_duration_in_minutes" {
+  description = "Number of minutes to BLOCK requests that hit the Rate Limit threshold"
+  type        = number
+  default     = 1
+}
+
+variable "waf_rate_limiting_threshold" {
+  description = "Maximum number of concurrent requests before Rate Limiting policy is applied"
+  type        = number
+  default     = 300
+}
+
+variable "waf_rate_limiting_bypass_ip_list" {
+  description = "List if IP CIDRs to bypass the Rate Limit Policy"
+  type        = list(string)
+  default     = []
+}
+
+variable "waf_rate_limiting_action" {
+  description = "Action to take when rate limiting (Block/Log)"
+  type        = string
+  default     = "Block"
+}
+
+variable "waf_managed_rulesets" {
+  description = "Map of all Managed rules you want to apply to the WAF, including any overrides"
+  type = map(object({
+    version : string,
+    action : string,
+    exclusions : optional(map(object({
+      match_variable : string,
+      operator : string,
+      selector : string
+    })), {})
+    overrides : optional(map(map(object({
+      action : string,
+      exclusions : optional(map(object({
+        match_variable : string,
+        operator : string,
+        selector : string
+      })), {})
+    }))), {})
+  }))
+  default = {}
+}
+
+variable "waf_custom_rules" {
+  description = "Map of all Custom rules you want to apply to the WAF"
+  type = map(object({
+    priority : number,
+    action : string,
+    match_conditions : map(object({
+      match_variable : string,
+      match_values : list(string),
+      operator : string,
+      selector : optional(string, null)
+    }))
+  }))
+  default = {}
+}
+
+variable "waf_custom_block_response_status_code" {
+  description = "Custom response status code when the WAF blocks a request."
+  type        = number
+  default     = 0
+}
+
+variable "waf_custom_block_response_body" {
+  description = "Base64 encoded custom response body when the WAF blocks a request"
+  type        = string
+  default     = ""
+}

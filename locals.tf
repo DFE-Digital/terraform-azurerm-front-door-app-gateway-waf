@@ -20,5 +20,17 @@ locals {
   enable_cdn_latency_monitor       = var.enable_cdn_latency_monitor
   cdn_latency_monitor_threshold    = var.cdn_latency_monitor_threshold
 
+  enable_waf                            = var.enable_waf
+  waf_managed_rulesets                  = var.waf_managed_rulesets
+  waf_custom_rules                      = var.waf_custom_rules
+  waf_mode                              = var.waf_mode
+  waf_custom_block_response_status_code = var.waf_custom_block_response_status_code
+  waf_custom_block_response_body        = var.waf_custom_block_response_body
+  waf_enable_rate_limiting              = var.waf_enable_rate_limiting
+  waf_rate_limiting_duration_in_minutes = var.waf_rate_limiting_duration_in_minutes
+  waf_rate_limiting_threshold           = var.waf_rate_limiting_threshold
+  waf_rate_limiting_bypass_ip_list      = var.waf_rate_limiting_bypass_ip_list
+  waf_rate_limiting_action              = var.waf_rate_limiting_action
+
   tags = var.tags
 }
