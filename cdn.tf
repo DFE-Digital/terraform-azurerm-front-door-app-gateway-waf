@@ -70,8 +70,13 @@ resource "azurerm_cdn_frontdoor_route" "waf" {
   cdn_frontdoor_origin_ids = [
     azurerm_cdn_frontdoor_origin.waf[each.key].id
   ]
-  enabled = true
+  cdn_frontdoor_rule_set_ids = flatten([
+    lookup(azurerm_cdn_frontdoor_rule_set.origin_headers, each.key, "") != "" ? [azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id] : [],
+    [azurerm_cdn_frontdoor_rule_set.global_headers.id],
+    length(local.cdn_host_redirects) > 0 ? azurerm_cdn_frontdoor_rule_set.redirects[0].id : []
+  ])
 
+  enabled                = true
   forwarding_protocol    = "HttpsOnly"
   https_redirect_enabled = true
   patterns_to_match      = ["/*"]
@@ -124,21 +129,19 @@ resource "azurerm_cdn_frontdoor_rule" "redirect" {
   }
 }
 
-resource "azurerm_cdn_frontdoor_rule_set" "add_response_headers" {
-  count = length(local.cdn_host_add_response_headers) > 0 ? 1 : 0
-
-  name                     = "${replace(local.resource_prefix, "-", "")}addresponseheaders"
+resource "azurerm_cdn_frontdoor_rule_set" "global_headers" {
+  name                     = "${replace(local.resource_prefix, "-", "")}headers"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
 }
 
 resource "azurerm_cdn_frontdoor_rule" "add_response_headers" {
-  for_each = { for index, response_header in local.cdn_host_add_response_headers : index => { "name" : response_header.name, "value" : response_header.value } }
+  for_each = { for index, response_header in local.cdn_add_response_headers : index => { "name" : response_header.name, "value" : response_header.value } }
 
   depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
 
   name                      = replace("addresponseheaders${each.key}", "-", "")
-  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.add_response_headers[0].id
-  order                     = 0
+  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.global_headers.id
+  order                     = each.key
   behavior_on_match         = "Continue"
 
   actions {
@@ -150,27 +153,125 @@ resource "azurerm_cdn_frontdoor_rule" "add_response_headers" {
   }
 }
 
-resource "azurerm_cdn_frontdoor_rule_set" "remove_response_headers" {
-  count = length(local.cdn_remove_response_headers) > 0 ? 1 : 0
-
-  name                     = "${replace(local.resource_prefix, "-", "")}removeresponseheaders"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
-}
-
 resource "azurerm_cdn_frontdoor_rule" "remove_response_header" {
   for_each = toset(local.cdn_remove_response_headers)
 
   depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
 
   name                      = replace("removeresponseheader${each.value}", "-", "")
-  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.remove_response_headers[0].id
-  order                     = 0
+  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.global_headers.id
+  order                     = index(local.cdn_remove_response_headers, each.value) + length(local.cdn_add_response_headers)
   behavior_on_match         = "Continue"
 
   actions {
     response_header_action {
       header_action = "Delete"
       header_name   = each.value
+    }
+  }
+}
+
+resource "azurerm_cdn_frontdoor_rule_set" "origin_headers" {
+  for_each = local.cdn_waf_targets
+
+  name                     = "${replace(each.key, "-", "")}headers"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
+}
+
+resource "azurerm_cdn_frontdoor_rule" "add_origin_response_headers" {
+  for_each = { for cdn_waf_target_name, data in local.cdn_waf_targets :
+    cdn_waf_target_name => lookup(data, "cdn_add_response_headers", []) if length(lookup(data, "cdn_add_response_headers", [])) > 0
+  }
+
+  depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
+
+  name                      = "addresponseheaders${replace(each.key, "-", "")}"
+  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id
+  order                     = index(keys(local.cdn_waf_targets), each.key)
+  behavior_on_match         = "Continue"
+
+  actions {
+    dynamic "response_header_action" {
+      for_each = { for index, header in each.value : header.name => header.value }
+
+      content {
+        header_action = "Overwrite"
+        header_name   = response_header_action.key
+        value         = response_header_action.value
+      }
+    }
+  }
+}
+
+resource "azurerm_cdn_frontdoor_rule" "remove_origin_response_headers" {
+  for_each = { for cdn_waf_target_name, data in local.cdn_waf_targets :
+    cdn_waf_target_name => lookup(data, "cdn_remove_response_headers", []) if length(lookup(data, "cdn_remove_response_headers", [])) > 0
+  }
+
+  depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
+
+  name                      = "removeresponseheaders${replace(each.key, "-", "")}"
+  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id
+  order                     = index(keys(local.cdn_waf_targets), each.key) + length(local.cdn_waf_targets)
+  behavior_on_match         = "Continue"
+
+  actions {
+    dynamic "response_header_action" {
+      for_each = each.value
+
+      content {
+        header_action = "Delete"
+        header_name   = response_header_action.value
+      }
+    }
+  }
+}
+
+resource "azurerm_cdn_frontdoor_rule" "add_origin_request_headers" {
+  for_each = { for cdn_waf_target_name, data in local.cdn_waf_targets :
+    cdn_waf_target_name => lookup(data, "cdn_add_request_headers", []) if length(lookup(data, "cdn_add_request_headers", [])) > 0
+  }
+
+  depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
+
+  name                      = "addrequestheaders${replace(each.key, "-", "")}"
+  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id
+  order                     = index(keys(local.cdn_waf_targets), each.key)
+  behavior_on_match         = "Continue"
+
+  actions {
+    dynamic "request_header_action" {
+      for_each = { for index, header in each.value : header.name => header.value }
+
+      content {
+        header_action = "Overwrite"
+        header_name   = request_header_action.key
+        value         = request_header_action.value
+      }
+    }
+  }
+}
+
+resource "azurerm_cdn_frontdoor_rule" "remove_origin_request_headers" {
+  for_each = { for cdn_waf_target_name, data in local.cdn_waf_targets :
+    cdn_waf_target_name => lookup(data, "cdn_remove_request_headers", []) if length(lookup(data, "cdn_remove_request_headers", [])) > 0
+  }
+
+  depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
+
+  name                      = "removerequestheaders${replace(each.key, "-", "")}"
+  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id
+  order                     = index(keys(local.cdn_waf_targets), each.key) + length(local.cdn_waf_targets)
+  behavior_on_match         = "Continue"
+
+  actions {
+    dynamic "request_header_action" {
+      for_each = each.value
+
+      content {
+        header_action = "Delete"
+        header_name   = request_header_action.value
+      }
     }
   }
 }
