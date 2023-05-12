@@ -28,22 +28,22 @@ module "azurerm_front_door_waf" {
       # health_probe_interval = 60,
       # health_probe_request_type = "HEAD", # or "GET"
       # health_probe_path = "/",
-      # add_response_headers = [
+      # cdn_add_response_headers = [
       #   {
       #     name = "X-Custom-Http-Header",
       #     value = "My-Favourite-Value"
       #   }
       # ],
-      # add_request_headers = [
+      # cdn_add_request_headers = [
       #   {
       #     name = "X-Request-Header",
       #     value = "My-Favourite-Value"
       #   }
       # ],
-      # remove_response_headers = [
+      # cdn_remove_response_headers = [
       #   "X-Remove-This-Header"
       # ]
-      # remove_request_headers = [
+      # cdn_remove_request_headers = [
       #   "X-Remove-Me"
       # ]
     }
