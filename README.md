@@ -20,24 +20,47 @@ module "azurerm_front_door_waf" {
   cdn_sku                     = "Premium_AzureFrontDoor" # or "Standard_AzureFrontDoor"
   cdn_response_timeout        = 60 # seconds
 
-  endpoints = {
-    "example" = {
-      domain                    = "example.com",
-      create_custom_domain      = false
-      enable_health_probe       = true
-      health_probe_interval     = 60
-      health_probe_request_type = "HEAD"
-      health_probe_path         = "/"
-    },
-    "example2" = {
-      domain                    = "example2.com"
-      create_custom_domain      = true
-      enable_health_probe       = true
-      health_probe_interval     = 60
-      health_probe_request_type = "GET"
-      health_probe_path         = "/healthcheck"
-    },
+  cdn_waf_targets = {
+    "my-origin-name" = {
+      domain = "my-fqdn.example.tld",
+      # create_custom_domain = true,
+      # enable_health_probe = true,
+      # health_probe_interval = 60,
+      # health_probe_request_type = "HEAD", # or "GET"
+      # health_probe_path = "/",
+      # add_response_headers = [
+      #   {
+      #     name = "X-Custom-Http-Header",
+      #     value = "My-Favourite-Value"
+      #   }
+      # ],
+      # add_request_headers = [
+      #   {
+      #     name = "X-Request-Header",
+      #     value = "My-Favourite-Value"
+      #   }
+      # ],
+      # remove_response_headers = [
+      #   "X-Remove-This-Header"
+      # ]
+      # remove_request_headers = [
+      #   "X-Remove-Me"
+      # ]
+    }
   }
+
+  ## Add custom HTTP Response Headers to all origins
+  # cdn_add_response_headers = [
+  #   {
+  #     name = "X-Apply-To-All-Origins",
+  #     value = "MyValue"
+  #   }
+  # ]
+
+  ## Remove HTTP Response Headers from all origins
+  # cdn_remove_response_headers = [
+  #   "X-Remove-Me"
+  # ]
 
   enable_waf                            = true
   waf_mode                              = "Prevention"
@@ -124,12 +147,16 @@ module "azurerm_front_door_waf" {
 | [azurerm_cdn_frontdoor_origin_group.waf](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_origin_group) | resource |
 | [azurerm_cdn_frontdoor_profile.waf](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_profile) | resource |
 | [azurerm_cdn_frontdoor_route.waf](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_route) | resource |
+| [azurerm_cdn_frontdoor_rule.add_origin_request_headers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule) | resource |
+| [azurerm_cdn_frontdoor_rule.add_origin_response_headers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule) | resource |
 | [azurerm_cdn_frontdoor_rule.add_response_headers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule) | resource |
 | [azurerm_cdn_frontdoor_rule.redirect](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule) | resource |
+| [azurerm_cdn_frontdoor_rule.remove_origin_request_headers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule) | resource |
+| [azurerm_cdn_frontdoor_rule.remove_origin_response_headers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule) | resource |
 | [azurerm_cdn_frontdoor_rule.remove_response_header](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule) | resource |
-| [azurerm_cdn_frontdoor_rule_set.add_response_headers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule_set) | resource |
+| [azurerm_cdn_frontdoor_rule_set.global_headers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule_set) | resource |
+| [azurerm_cdn_frontdoor_rule_set.origin_headers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule_set) | resource |
 | [azurerm_cdn_frontdoor_rule_set.redirects](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule_set) | resource |
-| [azurerm_cdn_frontdoor_rule_set.remove_response_headers](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_rule_set) | resource |
 | [azurerm_cdn_frontdoor_security_policy.waf](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_security_policy) | resource |
 | [azurerm_log_analytics_workspace.waf](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/log_analytics_workspace) | resource |
 | [azurerm_monitor_diagnostic_setting.waf](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_diagnostic_setting) | resource |
@@ -142,13 +169,13 @@ module "azurerm_front_door_waf" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_azure_location"></a> [azure\_location](#input\_azure\_location) | Azure location in which to launch resources. | `string` | n/a | yes |
-| <a name="input_cdn_host_add_response_headers"></a> [cdn\_host\_add\_response\_headers](#input\_cdn\_host\_add\_response\_headers) | List of response headers to add at the CDN Front Door `[{ "Name" = "Strict-Transport-Security", "value" = "max-age=31536000" }]` | `list(map(string))` | `[]` | no |
+| <a name="input_cdn_add_response_headers"></a> [cdn\_add\_response\_headers](#input\_cdn\_add\_response\_headers) | List of response headers to add at the CDN Front Door for all endpoints `[{ "Name" = "Strict-Transport-Security", "value" = "max-age=31536000" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_cdn_host_redirects"></a> [cdn\_host\_redirects](#input\_cdn\_host\_redirects) | CDN FrontDoor host redirects `[{ "from" = "example.com", "to" = "www.example.com" }]` | `list(map(string))` | `[]` | no |
 | <a name="input_cdn_latency_monitor_threshold"></a> [cdn\_latency\_monitor\_threshold](#input\_cdn\_latency\_monitor\_threshold) | CDN latency monitor threshold in milliseconds | `number` | `5000` | no |
-| <a name="input_cdn_remove_response_headers"></a> [cdn\_remove\_response\_headers](#input\_cdn\_remove\_response\_headers) | List of response headers to remove at the CDN Front Door | `list(string)` | `[]` | no |
+| <a name="input_cdn_remove_response_headers"></a> [cdn\_remove\_response\_headers](#input\_cdn\_remove\_response\_headers) | List of response headers to remove at the CDN Front Door for all endpoints | `list(string)` | `[]` | no |
 | <a name="input_cdn_response_timeout"></a> [cdn\_response\_timeout](#input\_cdn\_response\_timeout) | Azure CDN Front Door response timeout in seconds | `number` | `120` | no |
 | <a name="input_cdn_sku"></a> [cdn\_sku](#input\_cdn\_sku) | Azure CDN Front Door SKU | `string` | `"Standard_AzureFrontDoor"` | no |
-| <a name="input_cdn_waf_targets"></a> [cdn\_waf\_targets](#input\_cdn\_waf\_targets) | Target endpoints to configure the WAF to point towards | <pre>map(<br>    object({<br>      domain : string,<br>      create_custom_domain : optional(bool, false),<br>      enable_health_probe : optional(bool, true),<br>      health_probe_interval : optional(number, 60),<br>      health_probe_request_type : optional(string, "HEAD"),<br>      health_probe_path : optional(string, "/")<br>    })<br>  )</pre> | `{}` | no |
+| <a name="input_cdn_waf_targets"></a> [cdn\_waf\_targets](#input\_cdn\_waf\_targets) | Target endpoints to configure the WAF to point towards | <pre>map(<br>    object({<br>      domain : string,<br>      create_custom_domain : optional(bool, false),<br>      enable_health_probe : optional(bool, true),<br>      health_probe_interval : optional(number, 60),<br>      health_probe_request_type : optional(string, "HEAD"),<br>      health_probe_path : optional(string, "/"),<br>      cdn_add_response_headers : optional(list(object({<br>        name : string,<br>        value : string<br>        })<br>      ), [])<br>      cdn_add_request_headers : optional(list(object({<br>        name : string,<br>        value : string<br>        })<br>      ), [])<br>      cdn_remove_response_headers : optional(list(string), [])<br>      cdn_remove_request_headers : optional(list(string), [])<br>    })<br>  )</pre> | `{}` | no |
 | <a name="input_enable_cdn_latency_monitor"></a> [enable\_cdn\_latency\_monitor](#input\_enable\_cdn\_latency\_monitor) | Enable CDN latency monitor | `bool` | `false` | no |
 | <a name="input_enable_waf"></a> [enable\_waf](#input\_enable\_waf) | Enable CDN Front Door WAF | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment name. Will be used along with `project_name` as a prefix for all resources. | `string` | n/a | yes |
