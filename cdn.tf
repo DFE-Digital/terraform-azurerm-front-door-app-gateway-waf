@@ -1,16 +1,18 @@
 resource "azurerm_cdn_frontdoor_profile" "waf" {
+  count = local.waf_application == "CDN" ? 1 : 0
+
   name                     = "${local.resource_prefix}-cdnwaf"
   resource_group_name      = local.resource_group.name
   sku_name                 = local.cdn_sku
-  response_timeout_seconds = local.cdn_response_timeout
+  response_timeout_seconds = local.response_request_timeout
   tags                     = local.tags
 }
 
 resource "azurerm_cdn_frontdoor_origin_group" "waf" {
-  for_each = local.cdn_waf_targets
+  for_each = local.waf_application == "CDN" ? local.waf_targets : {}
 
   name                     = "${local.resource_prefix}-${each.key}"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf[0].id
 
   load_balancing {}
 
@@ -27,7 +29,7 @@ resource "azurerm_cdn_frontdoor_origin_group" "waf" {
 }
 
 resource "azurerm_cdn_frontdoor_origin" "waf" {
-  for_each = local.cdn_waf_targets
+  for_each = local.waf_application == "CDN" ? local.waf_targets : {}
 
   name                           = "${local.resource_prefix}origin-${each.key}"
   cdn_frontdoor_origin_group_id  = azurerm_cdn_frontdoor_origin_group.waf[each.key].id
@@ -40,19 +42,19 @@ resource "azurerm_cdn_frontdoor_origin" "waf" {
 }
 
 resource "azurerm_cdn_frontdoor_endpoint" "waf" {
-  for_each = local.cdn_waf_targets
+  for_each = local.waf_application == "CDN" ? local.waf_targets : {}
 
   name                     = substr("${local.resource_prefix}-${each.key}", 0, 46)
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf[0].id
 
   tags = local.tags
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain" "waf" {
-  for_each = local.cdn_custom_domains
+  for_each = local.waf_application == "CDN" ? local.cdn_custom_domains : {}
 
   name                     = "${local.resource_prefix}-${each.key}"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf[0].id
   host_name                = each.value
 
   tls {
@@ -62,7 +64,7 @@ resource "azurerm_cdn_frontdoor_custom_domain" "waf" {
 }
 
 resource "azurerm_cdn_frontdoor_route" "waf" {
-  for_each = local.cdn_waf_targets
+  for_each = local.waf_application == "CDN" ? local.waf_targets : {}
 
   name                          = "${local.resource_prefix}-${each.key}"
   cdn_frontdoor_endpoint_id     = azurerm_cdn_frontdoor_endpoint.waf[each.key].id
@@ -72,7 +74,7 @@ resource "azurerm_cdn_frontdoor_route" "waf" {
   ]
   cdn_frontdoor_rule_set_ids = flatten([
     lookup(azurerm_cdn_frontdoor_rule_set.origin_headers, each.key, "") != "" ? [azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id] : [],
-    [azurerm_cdn_frontdoor_rule_set.global_headers.id],
+    [azurerm_cdn_frontdoor_rule_set.global_headers[0].id],
     length(local.cdn_host_redirects) > 0 ? azurerm_cdn_frontdoor_rule_set.redirects[0].id : []
   ])
 
@@ -88,21 +90,21 @@ resource "azurerm_cdn_frontdoor_route" "waf" {
 }
 
 resource "azurerm_cdn_frontdoor_custom_domain_association" "waf" {
-  for_each = local.cdn_custom_domains
+  for_each = local.waf_application == "CDN" ? local.cdn_custom_domains : {}
 
   cdn_frontdoor_custom_domain_id = azurerm_cdn_frontdoor_custom_domain.waf[each.key].id
   cdn_frontdoor_route_ids        = [azurerm_cdn_frontdoor_route.waf[each.key].id]
 }
 
 resource "azurerm_cdn_frontdoor_rule_set" "redirects" {
-  count = length(local.cdn_host_redirects) > 0 ? 1 : 0
+  count = local.waf_application == "CDN" && length(local.cdn_host_redirects) > 0 ? 1 : 0
 
   name                     = "${replace(local.resource_prefix, "-", "")}redirects"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf[0].id
 }
 
 resource "azurerm_cdn_frontdoor_rule" "redirect" {
-  for_each = { for index, host_redirect in local.cdn_host_redirects : index => { "from" : host_redirect.from, "to" : host_redirect.to } }
+  for_each = local.waf_application == "CDN" ? { for index, host_redirect in local.cdn_host_redirects : index => { "from" : host_redirect.from, "to" : host_redirect.to } } : {}
 
   depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
 
@@ -130,17 +132,19 @@ resource "azurerm_cdn_frontdoor_rule" "redirect" {
 }
 
 resource "azurerm_cdn_frontdoor_rule_set" "global_headers" {
+  count = local.waf_application == "CDN" ? 1 : 0
+
   name                     = "${replace(local.resource_prefix, "-", "")}headers"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf[0].id
 }
 
 resource "azurerm_cdn_frontdoor_rule" "add_response_headers" {
-  for_each = { for index, response_header in local.cdn_add_response_headers : index => { "name" : response_header.name, "value" : response_header.value } }
+  for_each = local.waf_application == "CDN" ? { for index, response_header in local.cdn_add_response_headers : index => { "name" : response_header.name, "value" : response_header.value } } : {}
 
   depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
 
   name                      = replace("addresponseheaders${each.key}", "-", "")
-  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.global_headers.id
+  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.global_headers[0].id
   order                     = each.key
   behavior_on_match         = "Continue"
 
@@ -154,12 +158,12 @@ resource "azurerm_cdn_frontdoor_rule" "add_response_headers" {
 }
 
 resource "azurerm_cdn_frontdoor_rule" "remove_response_header" {
-  for_each = toset(local.cdn_remove_response_headers)
+  for_each = local.waf_application == "CDN" ? toset(local.cdn_remove_response_headers) : []
 
   depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
 
   name                      = replace("removeresponseheader${each.value}", "-", "")
-  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.global_headers.id
+  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.global_headers[0].id
   order                     = index(local.cdn_remove_response_headers, each.value) + length(local.cdn_add_response_headers)
   behavior_on_match         = "Continue"
 
@@ -172,22 +176,22 @@ resource "azurerm_cdn_frontdoor_rule" "remove_response_header" {
 }
 
 resource "azurerm_cdn_frontdoor_rule_set" "origin_headers" {
-  for_each = local.cdn_waf_targets
+  for_each = local.waf_application == "CDN" ? local.waf_targets : {}
 
   name                     = "${replace(each.key, "-", "")}headers"
-  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf.id
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf[0].id
 }
 
 resource "azurerm_cdn_frontdoor_rule" "add_origin_response_headers" {
-  for_each = { for cdn_waf_target_name, data in local.cdn_waf_targets :
-    cdn_waf_target_name => lookup(data, "cdn_add_response_headers", []) if length(lookup(data, "cdn_add_response_headers", [])) > 0
-  }
+  for_each = local.waf_application == "CDN" ? { for waf_target_name, data in local.waf_targets :
+    waf_target_name => lookup(data, "cdn_add_response_headers", []) if length(lookup(data, "cdn_add_response_headers", [])) > 0
+  } : {}
 
   depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
 
   name                      = "addresponseheaders${replace(each.key, "-", "")}"
   cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id
-  order                     = index(keys(local.cdn_waf_targets), each.key)
+  order                     = index(keys(local.waf_targets), each.key)
   behavior_on_match         = "Continue"
 
   actions {
@@ -204,15 +208,15 @@ resource "azurerm_cdn_frontdoor_rule" "add_origin_response_headers" {
 }
 
 resource "azurerm_cdn_frontdoor_rule" "remove_origin_response_headers" {
-  for_each = { for cdn_waf_target_name, data in local.cdn_waf_targets :
-    cdn_waf_target_name => lookup(data, "cdn_remove_response_headers", []) if length(lookup(data, "cdn_remove_response_headers", [])) > 0
-  }
+  for_each = local.waf_application == "CDN" ? { for waf_target_name, data in local.waf_targets :
+    waf_target_name => lookup(data, "cdn_remove_response_headers", []) if length(lookup(data, "cdn_remove_response_headers", [])) > 0
+  } : {}
 
   depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
 
   name                      = "removeresponseheaders${replace(each.key, "-", "")}"
   cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id
-  order                     = index(keys(local.cdn_waf_targets), each.key) + length(local.cdn_waf_targets)
+  order                     = index(keys(local.waf_targets), each.key) + length(local.waf_targets)
   behavior_on_match         = "Continue"
 
   actions {
@@ -228,15 +232,15 @@ resource "azurerm_cdn_frontdoor_rule" "remove_origin_response_headers" {
 }
 
 resource "azurerm_cdn_frontdoor_rule" "add_origin_request_headers" {
-  for_each = { for cdn_waf_target_name, data in local.cdn_waf_targets :
-    cdn_waf_target_name => lookup(data, "cdn_add_request_headers", []) if length(lookup(data, "cdn_add_request_headers", [])) > 0
-  }
+  for_each = local.waf_application == "CDN" ? { for waf_target_name, data in local.waf_targets :
+    waf_target_name => lookup(data, "cdn_add_request_headers", []) if length(lookup(data, "cdn_add_request_headers", [])) > 0
+  } : {}
 
   depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
 
   name                      = "addrequestheaders${replace(each.key, "-", "")}"
   cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id
-  order                     = index(keys(local.cdn_waf_targets), each.key)
+  order                     = index(keys(local.waf_targets), each.key)
   behavior_on_match         = "Continue"
 
   actions {
@@ -253,15 +257,15 @@ resource "azurerm_cdn_frontdoor_rule" "add_origin_request_headers" {
 }
 
 resource "azurerm_cdn_frontdoor_rule" "remove_origin_request_headers" {
-  for_each = { for cdn_waf_target_name, data in local.cdn_waf_targets :
-    cdn_waf_target_name => lookup(data, "cdn_remove_request_headers", []) if length(lookup(data, "cdn_remove_request_headers", [])) > 0
-  }
+  for_each = local.waf_application == "CDN" ? { for waf_target_name, data in local.waf_targets :
+    waf_target_name => lookup(data, "cdn_remove_request_headers", []) if length(lookup(data, "cdn_remove_request_headers", [])) > 0
+  } : {}
 
   depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
 
   name                      = "removerequestheaders${replace(each.key, "-", "")}"
   cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id
-  order                     = index(keys(local.cdn_waf_targets), each.key) + length(local.cdn_waf_targets)
+  order                     = index(keys(local.waf_targets), each.key) + length(local.waf_targets)
   behavior_on_match         = "Continue"
 
   actions {
