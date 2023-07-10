@@ -102,6 +102,23 @@ resource "azurerm_application_gateway" "waf" {
     }
   }
 
+  dynamic "probe" {
+    for_each = local.waf_targets
+
+    content {
+      name                = probe.key
+      timeout             = 60
+      unhealthy_threshold = 5
+      host                = probe.value["domain"]
+      interval            = probe.value["health_probe_interval"]
+      path                = probe.value["health_probe_path"]
+      protocol            = "Https"
+      match {
+        status_code = ["200-499"]
+      }
+    }
+  }
+
   dynamic "backend_http_settings" {
     for_each = local.waf_targets
 
@@ -112,6 +129,7 @@ resource "azurerm_application_gateway" "waf" {
       port                  = 443
       protocol              = "Https"
       request_timeout       = local.response_request_timeout
+      probe_name            = backend_http_settings.key
     }
   }
 
