@@ -102,13 +102,17 @@ resource "azurerm_application_gateway" "waf" {
     }
   }
 
-  backend_http_settings {
-    name                  = "backend-default"
-    cookie_based_affinity = local.app_gateway_v2_cookie_based_affinity
-    path                  = "/"
-    port                  = 443
-    protocol              = "Https"
-    request_timeout       = local.response_request_timeout
+  dynamic "backend_http_settings" {
+    for_each = local.waf_targets
+
+    content {
+      name                  = backend_http_settings.key
+      cookie_based_affinity = local.app_gateway_v2_cookie_based_affinity
+      path                  = "/"
+      port                  = 443
+      protocol              = "Https"
+      request_timeout       = local.response_request_timeout
+    }
   }
 
   identity {
@@ -136,7 +140,7 @@ resource "azurerm_application_gateway" "waf" {
       rule_type                  = "Basic"
       http_listener_name         = request_routing_rule.key
       backend_address_pool_name  = request_routing_rule.key
-      backend_http_settings_name = "backend-default"
+      backend_http_settings_name = request_routing_rule.key
       priority                   = index(keys(local.waf_targets), request_routing_rule.key) + 1
     }
   }
