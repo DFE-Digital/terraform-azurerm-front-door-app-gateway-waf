@@ -11,7 +11,7 @@ Example module usage:
 
 ```hcl
 module "azurerm_waf" {
-  source  = "github.com/dfe-digital/terraform-azurerm-front-door-app-gateway-waf?ref=v0.2.1"
+  source  = "github.com/dfe-digital/terraform-azurerm-front-door-app-gateway-waf?ref=v0.3.0"
 
   ## General configuration
   environment    = "dev"
