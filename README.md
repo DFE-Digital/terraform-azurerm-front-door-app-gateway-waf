@@ -1,17 +1,17 @@
-# Azure Front Door WAF terraform module
+# Azure WAF terraform module
 
 [![Terraform CI](./actions/workflows/continuous-integration-terraform.yml/badge.svg?branch=main)](./actions/workflows/continuous-integration-terraform.yml?branch=main)
 [![GitHub release](./releases)](./releases)
 
-This module creates and manages an Azure Front Door, and Front Door WAF.
+This module creates and manages an Azure Front Door/Application gateway, and associated WAF policy.
 
 ## Usage
 
 Example module usage:
 
 ```hcl
-module "azurerm_front_door_waf" {
-  source  = "github.com/dfe-digital/terraform-azurerm-front-door-app-gateway-waf?ref=v0.2.0"
+module "azurerm_waf" {
+  source  = "github.com/dfe-digital/terraform-azurerm-front-door-app-gateway-waf?ref=v0.2.1"
 
   ## General configuration
   environment    = "dev"
