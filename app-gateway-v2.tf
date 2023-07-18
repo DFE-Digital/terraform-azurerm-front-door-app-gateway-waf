@@ -23,6 +23,10 @@ resource "azurerm_key_vault" "app_gateway_certificates" {
       tenant_id = data.azurerm_client_config.current.tenant_id
       object_id = access_policy.value["object_id"]
 
+      secret_permissions = [
+        "Get"
+      ]
+
       certificate_permissions = [
         "Backup",
         "Create",
@@ -45,17 +49,8 @@ resource "azurerm_key_vault" "app_gateway_certificates" {
       tenant_id = data.azurerm_client_config.current.tenant_id
       object_id = access_policy.value
 
-      certificate_permissions = [
-        "Backup",
-        "Create",
-        "Delete",
-        "Get",
-        "Import",
-        "List",
-        "Purge",
-        "Recover",
-        "Restore",
-        "Update",
+      secret_permissions = [
+        "Get"
       ]
     }
   }
