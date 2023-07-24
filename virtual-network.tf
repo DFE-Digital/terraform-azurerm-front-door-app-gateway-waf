@@ -71,4 +71,6 @@ resource "azurerm_public_ip" "app_gateway_v2" {
   location            = local.resource_group.location
   allocation_method   = "Static"
   sku                 = "Standard"
+
+  tags = local.tags
 }
