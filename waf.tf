@@ -175,7 +175,7 @@ resource "azurerm_web_application_firewall_policy" "waf" {
         content {
           match_variables {
             variable_name = match_conditions.value["match_variable"]
-            selector      = match_conditions.value["selector"]
+            selector      = match_conditions.value["selector"] == "" ? null : match_conditions.value["selector"]
           }
           match_values = match_conditions.value["match_values"]
           operator     = match_conditions.value["operator"]
