@@ -7,6 +7,8 @@ resource "azurerm_user_assigned_identity" "app_gateway" {
 }
 
 resource "azurerm_key_vault" "app_gateway_certificates" {
+  count = local.waf_application == "AppGatewayV2" ? 1 : 0
+  
   name                       = "${local.resource_prefix}-agcerts"
   location                   = local.resource_group.location
   resource_group_name        = local.resource_group.name
