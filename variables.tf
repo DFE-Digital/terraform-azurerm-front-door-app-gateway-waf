@@ -242,6 +242,7 @@ variable "cdn_waf_managed_rulesets" {
     })), {})
     overrides : optional(map(map(object({
       action : string,
+      enabled : optional(bool, true),
       exclusions : optional(map(object({
         match_variable : string,
         operator : string,

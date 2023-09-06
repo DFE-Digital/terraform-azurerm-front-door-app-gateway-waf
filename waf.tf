@@ -93,7 +93,7 @@ resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
 
             content {
               rule_id = rule.key
-              enabled = true
+              enabled = rule.value["enabled"]
               action  = rule.value["action"]
 
               dynamic "exclusion" {
