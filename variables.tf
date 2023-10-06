@@ -300,12 +300,12 @@ variable "waf_custom_rules" {
   description = "Map of all Custom rules you want to apply to the WAF"
   type = map(object({
     priority : number,
-    action : string,
+    action : string
     match_conditions : map(object({
       match_variable : string,
-      match_values : list(string),
-      operator : string,
-      selector : optional(string, null)
+      match_values : optional(list(string), []),
+      operator : optional(string, "Any"),
+      selector : optional(string, ""),
     }))
   }))
   default = {}
