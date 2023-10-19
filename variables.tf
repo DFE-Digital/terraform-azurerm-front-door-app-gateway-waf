@@ -322,3 +322,21 @@ variable "cdn_waf_custom_block_response_body" {
   type        = string
   default     = ""
 }
+
+variable "monitor_email_receivers" {
+  description = "A list of email addresses that should be notified by monitoring alerts"
+  type        = list(string)
+  default     = []
+}
+
+variable "existing_logic_app_workflow" {
+  description = "Name, Resource Group and HTTP Trigger URL of an existing Logic App Workflow"
+  type = object({
+    name : string
+    resource_group_name : string
+  })
+  default = {
+    name                = ""
+    resource_group_name = ""
+  }
+}
