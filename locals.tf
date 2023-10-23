@@ -72,5 +72,11 @@ locals {
   cdn_waf_rate_limiting_bypass_ip_list      = var.cdn_waf_rate_limiting_bypass_ip_list
   cdn_waf_rate_limiting_action              = var.cdn_waf_rate_limiting_action
 
+  monitor_email_receivers         = var.monitor_email_receivers
+  existing_logic_app_workflow     = var.existing_logic_app_workflow
+  logic_app_workflow_name         = local.existing_logic_app_workflow.name == "" ? "" : data.azurerm_logic_app_workflow.existing_logic_app_workflow[0].name
+  logic_app_workflow_id           = local.existing_logic_app_workflow.name == "" ? "" : data.azurerm_logic_app_workflow.existing_logic_app_workflow[0].id
+  logic_app_workflow_callback_url = local.existing_logic_app_workflow.name == "" ? "" : jsondecode(data.azapi_resource_action.existing_logic_app_workflow_callback_url[0].output).value
+
   tags = var.tags
 }
