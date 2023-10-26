@@ -154,12 +154,11 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "frontdoor" {
   criteria {
     query = <<-QUERY
       AzureDiagnostics
-        | where ResourceProvider == "MICROSOFT.CDN" and Category == "FrontdoorWebApplicationFirewallLog"
-        | where TimeGenerated > ago(5min)
+        | where ResourceProvider == "MICROSOFT.CDN" and Category == "FrontDoorWebApplicationFirewallLog"
         | where action_s == "Block"
-        | project hostname_s, ruleId_s, Message, requestUri_s, details_data_s, action_s
-        | summarize ErrorCount=count() by hostname_s, ruleId_s, Message, requestUri_s, details_data_s, action_s
-        | project ErrorCount, hostname_s, ruleId_s, Message, requestUri_s, details_data_s, action_s
+        | project host_s, ruleName_s, requestUri_s, details_data_s, action_s
+        | summarize ErrorCount=count() by host_s, ruleName_s, requestUri_s, details_data_s, action_s
+        | project ErrorCount, host_s, ruleName_s,requestUri_s, details_data_s, action_s
         | order by ErrorCount desc
       QUERY
 
