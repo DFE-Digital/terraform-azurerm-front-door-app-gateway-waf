@@ -154,12 +154,12 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "frontdoor" {
   criteria {
     query = <<-QUERY
       AzureDiagnostics
-        | where ResourceProvider == "MICROSOFT.CDN" and Category == "FrontdoorWebApplicationFirewallLog"
+        | where ResourceProvider == "MICROSOFT.CDN" and Category == "FrontDoorWebApplicationFirewallLog"
         | where TimeGenerated > ago(5min)
         | where action_s == "Block"
-        | project hostname_s, ruleId_s, Message, requestUri_s, details_data_s, action_s
-        | summarize ErrorCount=count() by hostname_s, ruleId_s, Message, requestUri_s, details_data_s, action_s
-        | project ErrorCount, hostname_s, ruleId_s, Message, requestUri_s, details_data_s, action_s
+        | project host_s, ruleName_s, details_msg_s, requestUri_s, details_data_s, action_s
+        | summarize ErrorCount=count() by host_s, ruleName_s, details_msg_s, requestUri_s, details_data_s, action_s
+        | project ErrorCount, host_s, ruleName_s, requestUri_s, details_msg_s, details_data_s, action_s
         | order by ErrorCount desc
       QUERY
 
@@ -174,19 +174,19 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "frontdoor" {
     }
 
     dimension {
-      name     = "hostname_s"
+      name     = "host_s"
       operator = "Include"
       values   = ["*"]
     }
 
     dimension {
-      name     = "ruleId_s"
+      name     = "ruleName_s"
       operator = "Include"
       values   = ["*"]
     }
 
     dimension {
-      name     = "Message"
+      name     = "details_msg_s"
       operator = "Include"
       values   = ["*"]
     }
