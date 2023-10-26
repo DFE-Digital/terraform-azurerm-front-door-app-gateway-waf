@@ -174,19 +174,13 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "frontdoor" {
     }
 
     dimension {
-      name     = "hostname_s"
+      name     = "host_s"
       operator = "Include"
       values   = ["*"]
     }
 
     dimension {
-      name     = "ruleId_s"
-      operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "Message"
+      name     = "ruleName_s"
       operator = "Include"
       values   = ["*"]
     }
