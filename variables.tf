@@ -340,3 +340,9 @@ variable "existing_logic_app_workflow" {
     resource_group_name = ""
   }
 }
+
+variable "enable_waf_alert" {
+  description = "Toggle to enable or disable the WAF logs alert"
+  type        = bool
+  default     = true
+}

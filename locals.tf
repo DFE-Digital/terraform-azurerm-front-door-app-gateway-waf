@@ -57,6 +57,7 @@ locals {
 
   enable_waf                                = var.enable_waf
   waf_application                           = var.waf_application
+  enable_waf_alert                          = var.enable_waf_alert
   waf_custom_rules                          = var.waf_custom_rules
   waf_mode                                  = var.waf_mode
   cdn_waf_custom_block_response_status_code = var.cdn_waf_custom_block_response_status_code
