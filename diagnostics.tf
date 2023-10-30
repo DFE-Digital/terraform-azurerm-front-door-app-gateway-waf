@@ -55,7 +55,7 @@ resource "azurerm_monitor_action_group" "main" {
 }
 
 resource "azurerm_monitor_scheduled_query_rules_alert_v2" "appgateway" {
-  count = local.waf_application == "AppGatewayV2" ? 1 : 0
+  count = local.waf_application == "AppGatewayV2" && local.enable_waf_alert ? 1 : 0
 
   name                 = "${local.resource_prefix}waflogs"
   resource_group_name  = local.resource_group.name
@@ -140,7 +140,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "appgateway" {
 }
 
 resource "azurerm_monitor_scheduled_query_rules_alert_v2" "frontdoor" {
-  count = local.waf_application == "CDN" ? 1 : 0
+  count = local.waf_application == "CDN" && local.enable_waf_alert ? 1 : 0
 
   name                 = "${local.resource_prefix}waflogs"
   resource_group_name  = local.resource_group.name
