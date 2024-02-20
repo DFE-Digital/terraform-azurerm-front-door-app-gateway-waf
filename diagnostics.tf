@@ -61,7 +61,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "appgateway" {
   resource_group_name  = local.resource_group.name
   location             = local.resource_group.location
   evaluation_frequency = "PT5M"
-  window_duration      = "PT5M"
+  window_duration      = "PT1H"
   scopes               = [azurerm_log_analytics_workspace.waf.id]
   severity             = 3
   description          = "Incoming request was blocked by a WAF Rule"
@@ -69,64 +69,54 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "appgateway" {
   criteria {
     query = <<-QUERY
       AzureDiagnostics
-        | where ResourceProvider == "MICROSOFT.NETWORK" and Category == "ApplicationGatewayFirewallLog"
-        | where TimeGenerated > ago(5min)
-        | where action_s == "Blocked"
-        | project hostname_s, ruleId_s, Message, requestUri_s, details_data_s, action_s
-        | summarize ErrorCount=count() by hostname_s, ruleId_s, Message, requestUri_s, details_data_s, action_s
-        | project ErrorCount, hostname_s, ruleId_s, Message, requestUri_s, details_data_s, action_s
-        | order by ErrorCount desc
+      | where ResourceProvider == "MICROSOFT.NETWORK" and Category == "ApplicationGatewayFirewallLog"
+      | where (action_s == "Blocked" and Message !has "Inbound") or (action_s == "Matched" and ruleGroup_s != "UnknownBots")
+      | extend request = parse_url(strcat("http://", hostname_s, requestUri_s))
+      | project
+          TimeGenerated,
+          action_s,
+          hostname_s,
+          Host_s = split(hostname_s, ".")[0],
+          path_s = request.Path,
+          ruleSet_s = ruleSetType_s,
+          ruleId_s,
+          ruleGroup_s,
+          Message,
+          details_data_s
+      | order by TimeGenerated
       QUERY
 
     time_aggregation_method = "Count"
     threshold               = 1
     operator                = "GreaterThanOrEqual"
 
-    dimension {
-      name     = "ErrorCount"
-      operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "hostname_s"
-      operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "ruleId_s"
-      operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "Message"
-      operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "requestUri_s"
-      operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "details_data_s"
-      operator = "Include"
-      values   = ["*"]
+    failing_periods {
+      minimum_failing_periods_to_trigger_alert = 1
+      number_of_evaluation_periods             = 1
     }
 
     dimension {
       name     = "action_s"
       operator = "Include"
-      values   = ["*"]
+      values = [
+        "*"
+      ]
     }
 
-    failing_periods {
-      minimum_failing_periods_to_trigger_alert = 1
-      number_of_evaluation_periods             = 1
+    dimension {
+      name     = "hostname_s"
+      operator = "Include"
+      values = [
+        "*"
+      ]
+    }
+
+    dimension {
+      name     = "ruleSet_s"
+      operator = "Include"
+      values = [
+        "*"
+      ]
     }
   }
 
@@ -146,7 +136,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "frontdoor" {
   resource_group_name  = local.resource_group.name
   location             = local.resource_group.location
   evaluation_frequency = "PT5M"
-  window_duration      = "PT5M"
+  window_duration      = "PT1H"
   scopes               = [azurerm_log_analytics_workspace.waf.id]
   severity             = 3
   description          = "Incoming request was blocked by WAF Rule"
@@ -155,12 +145,19 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "frontdoor" {
     query = <<-QUERY
       AzureDiagnostics
         | where ResourceProvider == "MICROSOFT.CDN" and Category == "FrontDoorWebApplicationFirewallLog"
-        | where TimeGenerated > ago(5min)
-        | where action_s == "Block"
-        | project host_s, ruleName_s, details_msg_s, requestUri_s, details_data_s, action_s
-        | summarize ErrorCount=count() by host_s, ruleName_s, details_msg_s, requestUri_s, details_data_s, action_s
-        | project ErrorCount, host_s, ruleName_s, requestUri_s, details_msg_s, details_data_s, action_s
-        | order by ErrorCount desc
+        | where (action_s == "Blocked" and Message !has "Inbound") or (action_s == "Matched" and ruleGroup_s != "UnknownBots")
+        | extend request = parse_url(strcat("http://", host_s, requestUri_s))
+        | project
+            TimeGenerated,
+            action_s,
+            host_s,
+            Root_Host_s = split(host_s, ".")[0],
+            path_s = request.Path,
+            ruleSet_s = ruleSetType_s,
+            ruleId_s,
+            ruleGroup_s,
+            details_msg_s,
+            details_data_s
       QUERY
 
     time_aggregation_method = "Count"
@@ -168,45 +165,27 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "frontdoor" {
     operator                = "GreaterThanOrEqual"
 
     dimension {
-      name     = "ErrorCount"
+      name     = "action_s"
       operator = "Include"
-      values   = ["*"]
+      values = [
+        "*"
+      ]
     }
 
     dimension {
       name     = "host_s"
       operator = "Include"
-      values   = ["*"]
+      values = [
+        "*"
+      ]
     }
 
     dimension {
-      name     = "ruleName_s"
+      name     = "ruleSet_s"
       operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "details_msg_s"
-      operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "requestUri_s"
-      operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "details_data_s"
-      operator = "Include"
-      values   = ["*"]
-    }
-
-    dimension {
-      name     = "action_s"
-      operator = "Include"
-      values   = ["*"]
+      values = [
+        "*"
+      ]
     }
 
     failing_periods {
