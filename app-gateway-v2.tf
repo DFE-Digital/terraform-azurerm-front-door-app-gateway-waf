@@ -168,4 +168,5 @@ resource "azurerm_application_gateway" "waf" {
   }
 
   firewall_policy_id = azurerm_web_application_firewall_policy.waf[0].id
+  tags               = local.tags
 }
