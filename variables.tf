@@ -312,6 +312,7 @@ variable "waf_custom_rules" {
       match_values : optional(list(string), []),
       operator : optional(string, "Any"),
       selector : optional(string, ""),
+      negation_condition : optional(bool, false),
     }))
   }))
   default = {}
