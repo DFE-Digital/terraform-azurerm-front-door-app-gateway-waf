@@ -80,7 +80,13 @@ variable "restrict_app_gateway_v2_to_front_door_inbound_only" {
 variable "restrict_app_gateway_v2_to_front_door_inbound_only_destination_prefixes" {
   description = "If app gateway v2 has access restricted to front door only (by enabling `restrict_app_gateway_v2_to_front_door_inbound_only`), use this to set the destination prefixes for the security group rule."
   type        = list(string)
-  default     = ["*"]
+  default     = []
+}
+
+variable "restrict_app_gateway_v2_to_front_door_inbound_only_destination_prefix" {
+  description = "If app gateway v2 has access restricted to front door only (by enabling `restrict_app_gateway_v2_to_front_door_inbound_only`), use this to set the destination prefix for the security group rule."
+  type        = string
+  default     = "*"
 }
 
 variable "app_gateway_v2_identity_ids" {
