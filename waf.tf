@@ -177,8 +177,10 @@ resource "azurerm_web_application_firewall_policy" "waf" {
             variable_name = match_conditions.value["match_variable"]
             selector      = match_conditions.value["selector"] == "" ? null : match_conditions.value["selector"]
           }
-          match_values = match_conditions.value["match_values"]
-          operator     = match_conditions.value["operator"]
+
+          match_values       = match_conditions.value["match_values"]
+          operator           = match_conditions.value["operator"]
+          negation_condition = match_conditions.value["negation_condition"]
         }
       }
     }
