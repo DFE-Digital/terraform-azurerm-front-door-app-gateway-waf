@@ -22,6 +22,7 @@ locals {
   app_gateway_v2_cookie_based_affinity                                    = var.app_gateway_v2_cookie_based_affinity
   restrict_app_gateway_v2_to_front_door_inbound_only                      = var.restrict_app_gateway_v2_to_front_door_inbound_only
   restrict_app_gateway_v2_to_front_door_inbound_only_destination_prefixes = var.restrict_app_gateway_v2_to_front_door_inbound_only_destination_prefixes
+  restrict_app_gateway_v2_to_front_door_inbound_only_destination_prefix   = var.restrict_app_gateway_v2_to_front_door_inbound_only_destination_prefix
   app_gateway_v2_create_identity                                          = local.waf_application == "AppGatewayV2" && length(var.app_gateway_v2_identity_ids) == 0
   app_gateway_v2_identity_ids                                             = local.app_gateway_v2_create_identity ? [azurerm_user_assigned_identity.app_gateway[0].id] : var.app_gateway_v2_identity_ids
   app_gateway_v2_identity_names = toset([
