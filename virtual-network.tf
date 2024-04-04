@@ -42,9 +42,23 @@ resource "azurerm_network_security_group" "app_gateway_v2_allow_frontdoor_inboun
   resource_group_name = local.resource_group.name
 
   security_rule {
+    name                         = "AllowFrontdoor"
+    description                  = "Azure Front Door entrypoint: Allow incoming traffic from the AzureFrontDoor.Backend service tag to HTTP/HTTPS destination"
+    priority                     = 100
+    direction                    = "Inbound"
+    access                       = "Allow"
+    protocol                     = "Tcp"
+    source_address_prefix        = "AzureFrontDoor.Backend"
+    source_port_range            = "*"
+    destination_port_ranges      = [80, 443]
+    destination_address_prefix   = local.restrict_app_gateway_v2_to_front_door_inbound_only_destination_prefix
+    destination_address_prefixes = local.restrict_app_gateway_v2_to_front_door_inbound_only_destination_prefixes
+  }
+
+  security_rule {
     name                       = "AllowAppGatewayServices"
-    description                = "Infrastructure ports: Allow incoming requests from the source as the GatewayManager service tag and Any destination"
-    priority                   = 100
+    description                = "Infrastructure ports: Allow incoming requests from the GatewayManager service tag and Any destination"
+    priority                   = 200
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -55,17 +69,16 @@ resource "azurerm_network_security_group" "app_gateway_v2_allow_frontdoor_inboun
   }
 
   security_rule {
-    name                         = "AllowFrontdoor"
-    description                  = "Azure Front Door entrypoint: Allow incoming traffic from the source as the AzureFrontDoor.Backend service tag"
-    priority                     = 1000
-    direction                    = "Inbound"
-    access                       = "Allow"
-    protocol                     = "Tcp"
-    source_address_prefix        = "AzureFrontDoor.Backend"
-    source_port_ranges           = [80, 443]
-    destination_port_ranges      = [80, 443]
-    destination_address_prefix   = local.restrict_app_gateway_v2_to_front_door_inbound_only_destination_prefix
-    destination_address_prefixes = local.restrict_app_gateway_v2_to_front_door_inbound_only_destination_prefixes
+    name                       = "AllowVNetServices"
+    description                = "Virtual Network: Allow incoming requests from the Virtual Network source and Any destination"
+    priority                   = 300
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    source_address_prefix      = "VirtualNetwork"
+    destination_port_range     = "*"
+    destination_address_prefix = "*"
   }
 
   tags = local.tags
