@@ -142,6 +142,15 @@ resource "azurerm_application_gateway" "waf" {
     identity_ids = local.app_gateway_v2_identity_ids
   }
 
+  dynamic "custom_error_configuration" {
+    for_each = local.app_gateway_v2_custom_error_configuration
+
+    content {
+      status_code           = custom_error_configuration.key
+      custom_error_page_url = custom_error_configuration.value
+    }
+  }
+
   dynamic "http_listener" {
     for_each = local.waf_targets
 
@@ -151,6 +160,15 @@ resource "azurerm_application_gateway" "waf" {
       frontend_ip_configuration_name = "default-frontend"
       frontend_port_name             = "http"
       protocol                       = "Http"
+
+      dynamic "custom_error_configuration" {
+        for_each = http_listener.value["custom_error_configuration"]
+
+        content {
+          status_code           = custom_error_configuration.key
+          custom_error_page_url = custom_error_configuration.value
+        }
+      }
     }
   }
 
