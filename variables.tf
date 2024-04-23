@@ -95,6 +95,12 @@ variable "app_gateway_v2_identity_ids" {
   default     = []
 }
 
+variable "app_gateway_v2_custom_error_configuration" {
+  description = "A map of Status Codes to HTML URLs"
+  type        = map(string)
+  default     = {}
+}
+
 variable "key_vault_app_gateway_certificates_access_users" {
   description = "List of users that require access to the App Gateway Certificates Key Vault. This should be a list of User Principle Names (Found in Active Directory) that need to run terraform"
   type        = list(string)
@@ -149,6 +155,7 @@ variable "waf_targets" {
       ), [])
       cdn_remove_response_headers : optional(list(string), [])
       cdn_remove_request_headers : optional(list(string), [])
+      custom_error_configuration : optional(map(string), {})
     })
   )
   default = {}

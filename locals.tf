@@ -38,6 +38,7 @@ locals {
       identity.principal_id
     ]
   )
+  app_gateway_v2_custom_error_configuration            = var.app_gateway_v2_custom_error_configuration
   key_vault_app_gateway_certificates_access_users      = toset(var.key_vault_app_gateway_certificates_access_users)
   key_vault_app_gateway_certificates_access_ipv4       = var.key_vault_app_gateway_certificates_access_ipv4
   key_vault_app_gateway_certificates_access_subnet_ids = var.key_vault_app_gateway_certificates_access_subnet_ids
