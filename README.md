@@ -54,7 +54,14 @@ module "azurerm_waf" {
       # ]
       # cdn_remove_request_headers = [
       #   "X-Remove-Me"
-      # ]
+      # ],
+      # custom_errors = {
+      #   error_page_directory = "${path.root}/my-error-pages"
+      #   error_pages = {
+      #     403 = "403.html",
+      #     502 = "502.html"
+      #   }
+      # }
     }
   }
 
@@ -240,6 +247,9 @@ module "azurerm_waf" {
 | [azurerm_public_ip.app_gateway_v2](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
 | [azurerm_resource_group.default](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_route_table.default](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route_table) | resource |
+| [azurerm_storage_account.custom_error](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
+| [azurerm_storage_blob.custom_error_web_pages](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_blob) | resource |
+| [azurerm_storage_container.custom_error_web](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container) | resource |
 | [azurerm_subnet.app_gateway_v2_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_subnet_network_security_group_association.app_gateway_v2_allow_frontdoor_inbound_only](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_network_security_group_association) | resource |
 | [azurerm_subnet_route_table_association.app_gateway_v2_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_route_table_association) | resource |
@@ -302,7 +312,7 @@ module "azurerm_waf" {
 | <a name="input_waf_application"></a> [waf\_application](#input\_waf\_application) | Which product to apply the WAF to. Must be either CDN or AppGatewayV2 | `string` | `"CDN"` | no |
 | <a name="input_waf_custom_rules"></a> [waf\_custom\_rules](#input\_waf\_custom\_rules) | Map of all Custom rules you want to apply to the WAF | <pre>map(object({<br>    priority : number,<br>    action : string<br>    match_conditions : map(object({<br>      match_variable : string,<br>      match_values : optional(list(string), []),<br>      operator : optional(string, "Any"),<br>      selector : optional(string, ""),<br>      negation_condition : optional(bool, false),<br>    }))<br>  }))</pre> | `{}` | no |
 | <a name="input_waf_mode"></a> [waf\_mode](#input\_waf\_mode) | WAF mode | `string` | `"Prevention"` | no |
-| <a name="input_waf_targets"></a> [waf\_targets](#input\_waf\_targets) | Target endpoints to configure the WAF to point towards | <pre>map(<br>    object({<br>      domain : string,<br>      cdn_create_custom_domain : optional(bool, false),<br>      custom_fqdn : optional(string, "")<br>      app_gateway_v2_ssl_certificate_key_vault_id : optional(string, "")<br>      enable_health_probe : optional(bool, true),<br>      health_probe_interval : optional(number, 60),<br>      health_probe_request_type : optional(string, "HEAD"),<br>      health_probe_path : optional(string, "/"),<br>      cdn_add_response_headers : optional(list(object({<br>        name : string,<br>        value : string<br>        })<br>      ), [])<br>      cdn_add_request_headers : optional(list(object({<br>        name : string,<br>        value : string<br>        })<br>      ), [])<br>      cdn_remove_response_headers : optional(list(string), [])<br>      cdn_remove_request_headers : optional(list(string), [])<br>      custom_error_configuration : optional(map(string), {})<br>    })<br>  )</pre> | `{}` | no |
+| <a name="input_waf_targets"></a> [waf\_targets](#input\_waf\_targets) | Target endpoints to configure the WAF to point towards | <pre>map(<br>    object({<br>      domain : string,<br>      cdn_create_custom_domain : optional(bool, false),<br>      custom_fqdn : optional(string, "")<br>      app_gateway_v2_ssl_certificate_key_vault_id : optional(string, "")<br>      enable_health_probe : optional(bool, true),<br>      health_probe_interval : optional(number, 60),<br>      health_probe_request_type : optional(string, "HEAD"),<br>      health_probe_path : optional(string, "/"),<br>      cdn_add_response_headers : optional(list(object({<br>        name : string,<br>        value : string<br>        })<br>      ), [])<br>      cdn_add_request_headers : optional(list(object({<br>        name : string,<br>        value : string<br>        })<br>      ), [])<br>      cdn_remove_response_headers : optional(list(string), [])<br>      cdn_remove_request_headers : optional(list(string), [])<br>      custom_errors : optional(object({<br>        error_page_directory : string,<br>        error_pages : map(string)<br>      }), null)<br>    })<br>  )</pre> | `{}` | no |
 
 ## Outputs
 
