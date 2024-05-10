@@ -12,15 +12,9 @@ resource "azurerm_storage_account" "custom_error" {
 
   static_website {}
 
-  tags = local.tags
-}
-
-resource "azurerm_storage_container" "custom_error_web" {
-  for_each = { for k, v in local.waf_targets : k => v if v["custom_errors"] != null }
-
-  name                  = "$web"
-  storage_account_name  = azurerm_storage_account.custom_error[each.key].name
-  container_access_type = "private"
+  tags = merge(local.tags, {
+    "waf_target" = each.key
+  })
 }
 
 resource "azurerm_storage_blob" "custom_error_web_pages" {
