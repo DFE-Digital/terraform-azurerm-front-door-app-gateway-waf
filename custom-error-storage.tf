@@ -12,6 +12,16 @@ resource "azurerm_storage_account" "custom_error" {
 
   static_website {}
 
+  blob_properties {
+    cors_rule {
+      allowed_headers    = ["*"]
+      allowed_methods    = ["GET", "OPTIONS"]
+      allowed_origins    = ["*"]
+      exposed_headers    = ["*"]
+      max_age_in_seconds = 0
+    }
+  }
+
   tags = merge(local.tags, {
     "waf_target" = each.key
   })
