@@ -317,5 +317,6 @@ module "azurerm_waf" {
 
 | Name | Description |
 |------|-------------|
+| <a name="output_custom_error_web_page_storage_accounts"></a> [custom\_error\_web\_page\_storage\_accounts](#output\_custom\_error\_web\_page\_storage\_accounts) | Storage Accounts used for holding custom error pages |
 | <a name="output_environment"></a> [environment](#output\_environment) | n/a |
 <!-- END_TF_DOCS -->
