@@ -26,7 +26,7 @@ resource "azurerm_storage_container" "custom_error_web" {
 resource "azurerm_storage_blob" "custom_error_web_pages" {
   for_each = merge([
     for k, v in local.waf_targets : {
-      for error_page_key, error_page_value in fileset(v["custom_errors"]["error_page_directory"], "*") : "${k}_${error_page_key}" => {
+      for error_page_key, error_page_value in fileset(v["custom_errors"]["error_page_directory"], "**") : "${k}_${error_page_key}" => {
         error_page     = error_page_value,
         waf_target_key = k
       }
