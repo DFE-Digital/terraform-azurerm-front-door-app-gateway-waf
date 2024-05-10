@@ -58,8 +58,8 @@ module "azurerm_waf" {
       # custom_errors = {
       #   error_page_directory = "${path.root}/my-error-pages"
       #   error_pages = {
-      #     403 = "403.html",
-      #     502 = "502.html"
+      #     "HttpStatus403" = "403.html",
+      #     "HttpStatus502" = "502.html"
       #   }
       # }
     }
