@@ -39,5 +39,6 @@ resource "azurerm_storage_blob" "custom_error_web_pages" {
   type                   = "Block"
   source                 = "${local.waf_targets[each.value["waf_target_key"]]["custom_errors"]["error_page_directory"]}/${each.value["error_page"]}"
   content_md5            = filemd5("${local.waf_targets[each.value["waf_target_key"]]["custom_errors"]["error_page_directory"]}/${each.value["error_page"]}")
+  content_type           = lookup(local.content_types, element(split(".", each.value["error_page"]), length(split(".", each.value["error_page"])) - 1), null)
   access_tier            = "Cool"
 }

@@ -81,5 +81,11 @@ locals {
   logic_app_workflow_id           = local.existing_logic_app_workflow.name == "" ? "" : data.azurerm_logic_app_workflow.existing_logic_app_workflow[0].id
   logic_app_workflow_callback_url = local.existing_logic_app_workflow.name == "" ? "" : jsondecode(data.azapi_resource_action.existing_logic_app_workflow_callback_url[0].output).value
 
+  content_types = {
+    css  = "text/css"
+    html = "text/html"
+    js   = "application/javascript"
+  }
+
   tags = var.tags
 }
