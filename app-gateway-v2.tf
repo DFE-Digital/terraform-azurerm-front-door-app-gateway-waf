@@ -166,7 +166,7 @@ resource "azurerm_application_gateway" "waf" {
 
         content {
           status_code           = custom_error_configuration.key
-          custom_error_page_url = "${azurerm_storage_account.custom_error[http_listener.key].primary_web_endpoint}/${custom_error_configuration.value}"
+          custom_error_page_url = "${azurerm_storage_account.custom_error[http_listener.key].primary_web_endpoint}${custom_error_configuration.value}"
         }
       }
     }
