@@ -35,7 +35,7 @@ resource "azurerm_storage_blob" "custom_error_web_pages" {
 
   name                   = each.value["error_page"]
   storage_account_name   = azurerm_storage_account.custom_error[each.value["waf_target_key"]].name
-  storage_container_name = azurerm_storage_container.custom_error_web[each.value["waf_target_key"]].name
+  storage_container_name = "$web"
   type                   = "Block"
   source                 = "${local.waf_targets[each.value["waf_target_key"]]["custom_errors"]["error_page_directory"]}/${each.value["error_page"]}"
   content_md5            = filemd5("${local.waf_targets[each.value["waf_target_key"]]["custom_errors"]["error_page_directory"]}/${each.value["error_page"]}")
