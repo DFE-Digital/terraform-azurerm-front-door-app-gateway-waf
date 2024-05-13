@@ -155,7 +155,10 @@ variable "waf_targets" {
       ), [])
       cdn_remove_response_headers : optional(list(string), [])
       cdn_remove_request_headers : optional(list(string), [])
-      custom_error_configuration : optional(map(string), {})
+      custom_errors : optional(object({
+        error_page_directory : string,
+        error_pages : map(string)
+      }), null)
     })
   )
   default = {}
