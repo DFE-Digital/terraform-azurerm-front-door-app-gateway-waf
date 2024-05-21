@@ -363,3 +363,15 @@ variable "enable_waf_alert" {
   type        = bool
   default     = true
 }
+
+variable "app_gateway_v2_waf_file_upload_limit_in_mb" {
+  description = "Maximum file size permitted in MB"
+  type        = number
+  default     = 100
+}
+
+variable "app_gateway_v2_waf_max_request_body_size_in_kb" {
+  description = "Maximum request size for a single request in KB"
+  type        = number
+  default     = 128
+}
