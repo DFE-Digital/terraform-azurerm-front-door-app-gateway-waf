@@ -156,8 +156,10 @@ resource "azurerm_web_application_firewall_policy" "waf" {
   location            = local.resource_group.location
 
   policy_settings {
-    enabled = local.enable_waf
-    mode    = local.waf_mode
+    enabled                     = local.enable_waf
+    mode                        = local.waf_mode
+    file_upload_limit_in_mb     = local.app_gateway_v2_waf_file_upload_limit_in_mb
+    max_request_body_size_in_kb = local.app_gateway_v2_waf_max_request_body_size_in_kb
   }
 
   dynamic "custom_rules" {
