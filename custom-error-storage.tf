@@ -1,7 +1,7 @@
 resource "azurerm_storage_account" "custom_error" {
   for_each = { for k, v in local.waf_targets : k => v if v["custom_errors"] != null }
 
-  name                          = "staticwebsite${substr(sha1(each.key), 0, 8)}"
+  name                          = "${replace(local.environment, "-", "")}staticwebsite${substr(sha1(each.key), 0, 4)}"
   resource_group_name           = local.resource_prefix
   location                      = local.azure_location
   account_tier                  = "Standard"
