@@ -208,7 +208,7 @@ module "azurerm_waf" {
 | Name | Version |
 |------|---------|
 | <a name="provider_azapi"></a> [azapi](#provider\_azapi) | 1.13.1 |
-| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 2.49.1 |
+| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 2.53.1 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.110.0 |
 
 ## Resources
