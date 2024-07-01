@@ -7,7 +7,7 @@ resource "azurerm_user_assigned_identity" "app_gateway" {
 }
 
 resource "azurerm_key_vault" "app_gateway_certificates" {
-  count = local.waf_application == "AppGatewayV2" ? 1 : 0
+  count = local.waf_application == "AppGatewayV2" && local.enable_key_vault_app_gateway_certificates ? 1 : 0
 
   name                       = "${local.resource_prefix}-agcerts"
   location                   = local.resource_group.location
@@ -15,7 +15,7 @@ resource "azurerm_key_vault" "app_gateway_certificates" {
   tenant_id                  = data.azurerm_client_config.current.tenant_id
   sku_name                   = "standard"
   soft_delete_retention_days = 7
-  enable_rbac_authorization  = false
+  enable_rbac_authorization  = local.key_vault_app_gateway_enable_rbac
   purge_protection_enabled   = true
 
   dynamic "access_policy" {
@@ -65,6 +65,14 @@ resource "azurerm_key_vault" "app_gateway_certificates" {
   }
 
   tags = local.tags
+}
+
+resource "azurerm_role_assignment" "app_gateway_certificates" {
+  for_each = local.key_vault_app_gateway_enable_rbac ? local.app_gateway_v2_identity_principle_ids : []
+
+  scope                = azurerm_key_vault.app_gateway_certificates[0].id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = each.value
 }
 
 resource "azurerm_application_gateway" "waf" {

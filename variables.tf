@@ -101,6 +101,12 @@ variable "app_gateway_v2_custom_error_configuration" {
   default     = {}
 }
 
+variable "enable_key_vault_app_gateway_certificates" {
+  description = "Deploy a Key Vault to hold TLS Certificates for use by App Gateway"
+  type        = bool
+  default     = true
+}
+
 variable "key_vault_app_gateway_certificates_access_users" {
   description = "List of users that require access to the App Gateway Certificates Key Vault. This should be a list of User Principle Names (Found in Active Directory) that need to run terraform"
   type        = list(string)
@@ -111,6 +117,12 @@ variable "key_vault_app_gateway_certificates_access_ipv4" {
   description = "List of IPv4 Addresses that are permitted to access the App Gateway Certificates Key Vault"
   type        = list(string)
   default     = []
+}
+
+variable "key_vault_app_gateway_enable_rbac" {
+  description = "Use RBAC authorisation on the App Gateway Certificates Key Vault. Has no effect if key_vault_app_gateway_certificates_access_users is defined."
+  type        = bool
+  default     = false
 }
 
 variable "key_vault_app_gateway_certificates_access_subnet_ids" {

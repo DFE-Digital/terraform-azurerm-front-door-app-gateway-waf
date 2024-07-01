@@ -246,6 +246,7 @@ module "azurerm_waf" {
 | [azurerm_network_security_group.app_gateway_v2_allow_frontdoor_inbound_only](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group) | resource |
 | [azurerm_public_ip.app_gateway_v2](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
 | [azurerm_resource_group.default](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
+| [azurerm_role_assignment.app_gateway_certificates](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_route_table.default](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route_table) | resource |
 | [azurerm_storage_account.custom_error](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 | [azurerm_storage_blob.custom_error_web_pages](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_blob) | resource |
@@ -290,6 +291,7 @@ module "azurerm_waf" {
 | <a name="input_cdn_waf_rate_limiting_bypass_ip_list"></a> [cdn\_waf\_rate\_limiting\_bypass\_ip\_list](#input\_cdn\_waf\_rate\_limiting\_bypass\_ip\_list) | List if IP CIDRs to bypass the Rate Limit Policy | `list(string)` | `[]` | no |
 | <a name="input_cdn_waf_rate_limiting_duration_in_minutes"></a> [cdn\_waf\_rate\_limiting\_duration\_in\_minutes](#input\_cdn\_waf\_rate\_limiting\_duration\_in\_minutes) | Number of minutes to BLOCK requests that hit the Rate Limit threshold | `number` | `1` | no |
 | <a name="input_cdn_waf_rate_limiting_threshold"></a> [cdn\_waf\_rate\_limiting\_threshold](#input\_cdn\_waf\_rate\_limiting\_threshold) | Maximum number of concurrent requests before Rate Limiting policy is applied | `number` | `300` | no |
+| <a name="input_enable_key_vault_app_gateway_certificates"></a> [enable\_key\_vault\_app\_gateway\_certificates](#input\_enable\_key\_vault\_app\_gateway\_certificates) | Deploy a Key Vault to hold TLS Certificates for use by App Gateway | `bool` | `true` | no |
 | <a name="input_enable_latency_monitor"></a> [enable\_latency\_monitor](#input\_enable\_latency\_monitor) | Enable CDN latency monitor | `bool` | `false` | no |
 | <a name="input_enable_waf"></a> [enable\_waf](#input\_enable\_waf) | Enable WAF | `bool` | `false` | no |
 | <a name="input_enable_waf_alert"></a> [enable\_waf\_alert](#input\_enable\_waf\_alert) | Toggle to enable or disable the WAF logs alert | `bool` | `true` | no |
@@ -301,6 +303,7 @@ module "azurerm_waf" {
 | <a name="input_key_vault_app_gateway_certificates_access_ipv4"></a> [key\_vault\_app\_gateway\_certificates\_access\_ipv4](#input\_key\_vault\_app\_gateway\_certificates\_access\_ipv4) | List of IPv4 Addresses that are permitted to access the App Gateway Certificates Key Vault | `list(string)` | `[]` | no |
 | <a name="input_key_vault_app_gateway_certificates_access_subnet_ids"></a> [key\_vault\_app\_gateway\_certificates\_access\_subnet\_ids](#input\_key\_vault\_app\_gateway\_certificates\_access\_subnet\_ids) | List of Azure Subnet IDs that are permitted to access the App Gateway Certificates Key Vault | `list(string)` | `[]` | no |
 | <a name="input_key_vault_app_gateway_certificates_access_users"></a> [key\_vault\_app\_gateway\_certificates\_access\_users](#input\_key\_vault\_app\_gateway\_certificates\_access\_users) | List of users that require access to the App Gateway Certificates Key Vault. This should be a list of User Principle Names (Found in Active Directory) that need to run terraform | `list(string)` | `[]` | no |
+| <a name="input_key_vault_app_gateway_enable_rbac"></a> [key\_vault\_app\_gateway\_enable\_rbac](#input\_key\_vault\_app\_gateway\_enable\_rbac) | Use RBAC authorisation on the App Gateway Certificates Key Vault. Has no effect if key\_vault\_app\_gateway\_certificates\_access\_users is defined. | `bool` | `false` | no |
 | <a name="input_latency_monitor_threshold"></a> [latency\_monitor\_threshold](#input\_latency\_monitor\_threshold) | CDN latency monitor threshold in milliseconds | `number` | `5000` | no |
 | <a name="input_monitor_email_receivers"></a> [monitor\_email\_receivers](#input\_monitor\_email\_receivers) | A list of email addresses that should be notified by monitoring alerts | `list(string)` | `[]` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Project name. Will be used along with `environment` as a prefix for all resources. | `string` | n/a | yes |

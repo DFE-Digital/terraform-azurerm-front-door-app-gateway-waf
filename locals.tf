@@ -39,6 +39,8 @@ locals {
     ]
   )
   app_gateway_v2_custom_error_configuration            = var.app_gateway_v2_custom_error_configuration
+  enable_key_vault_app_gateway_certificates            = var.enable_key_vault_app_gateway_certificates
+  key_vault_app_gateway_enable_rbac                    = var.key_vault_app_gateway_enable_rbac
   key_vault_app_gateway_certificates_access_users      = toset(var.key_vault_app_gateway_certificates_access_users)
   key_vault_app_gateway_certificates_access_ipv4       = var.key_vault_app_gateway_certificates_access_ipv4
   key_vault_app_gateway_certificates_access_subnet_ids = var.key_vault_app_gateway_certificates_access_subnet_ids
