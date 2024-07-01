@@ -68,7 +68,7 @@ resource "azurerm_key_vault" "app_gateway_certificates" {
 }
 
 resource "azurerm_role_assignment" "app_gateway_certificates" {
-  for_each = local.key_vault_app_gateway_enable_rbac ? local.app_gateway_v2_identity_principle_ids : []
+  for_each = local.key_vault_app_gateway_enable_rbac ? toset(local.app_gateway_v2_identity_principle_ids) : []
 
   scope                = azurerm_key_vault.app_gateway_certificates[0].id
   role_definition_name = "Key Vault Secrets User"
