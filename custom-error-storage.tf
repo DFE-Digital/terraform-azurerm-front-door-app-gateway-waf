@@ -22,6 +22,10 @@ resource "azurerm_storage_account" "custom_error" {
     }
   }
 
+  sas_policy {
+    expiration_period = "02.00:00:00"
+  }
+
   tags = merge(local.tags, {
     "waf_target" = each.key
   })
