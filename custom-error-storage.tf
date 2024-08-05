@@ -31,6 +31,20 @@ resource "azurerm_storage_account" "custom_error" {
   })
 }
 
+resource "azapi_update_resource" "container_app_storage_key_rotation_reminder" {
+  for_each = { for k, v in local.waf_targets : k => v if v["custom_errors"] != null }
+
+  type        = "Microsoft.Storage/storageAccounts@2023-01-01"
+  resource_id = azurerm_storage_account.custom_error[each.key].id
+  body = jsonencode({
+    properties = {
+      keyPolicy : {
+        keyExpirationPeriodInDays : 90
+      }
+    }
+  })
+}
+
 resource "azurerm_storage_blob" "custom_error_web_pages" {
   for_each = merge([
     for k, v in local.waf_targets : {
