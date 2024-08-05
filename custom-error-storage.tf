@@ -20,6 +20,14 @@ resource "azurerm_storage_account" "custom_error" {
       exposed_headers    = ["*"]
       max_age_in_seconds = 0
     }
+
+    delete_retention_policy {
+      days = 7
+    }
+
+    container_delete_retention_policy {
+      days = 7
+    }
   }
 
   sas_policy {
