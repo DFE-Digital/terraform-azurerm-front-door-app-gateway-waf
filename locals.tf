@@ -70,6 +70,7 @@ locals {
 
   app_gateway_v2_waf_file_upload_limit_in_mb     = var.app_gateway_v2_waf_file_upload_limit_in_mb
   app_gateway_v2_waf_max_request_body_size_in_kb = var.app_gateway_v2_waf_max_request_body_size_in_kb
+  app_gateway_v2_waf_request_body_enforcement    = var.app_gateway_v2_waf_request_body_enforcement
   app_gateway_v2_waf_managed_rulesets            = var.app_gateway_v2_waf_managed_rulesets
   app_gateway_v2_waf_managed_rulesets_exclusions = var.app_gateway_v2_waf_managed_rulesets_exclusions
 
