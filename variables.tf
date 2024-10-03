@@ -333,7 +333,7 @@ variable "waf_custom_rules" {
       match_variable : string,
       match_values : optional(list(string), []),
       operator : optional(string, "Any"),
-      selector : optional(string, ""),
+      selector : optional(string, null),
       negation_condition : optional(bool, false),
     }))
   }))
