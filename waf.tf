@@ -160,6 +160,7 @@ resource "azurerm_web_application_firewall_policy" "waf" {
     mode                        = local.waf_mode
     file_upload_limit_in_mb     = local.app_gateway_v2_waf_file_upload_limit_in_mb
     max_request_body_size_in_kb = local.app_gateway_v2_waf_max_request_body_size_in_kb
+    request_body_enforcement    = local.app_gateway_v2_waf_request_body_enforcement
   }
 
   dynamic "custom_rules" {

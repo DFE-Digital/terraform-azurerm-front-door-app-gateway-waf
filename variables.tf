@@ -383,7 +383,13 @@ variable "app_gateway_v2_waf_file_upload_limit_in_mb" {
 }
 
 variable "app_gateway_v2_waf_max_request_body_size_in_kb" {
-  description = "Maximum request size for a single request in KB"
+  description = "Maximum request size for a single request in KB. Has no effect if 'app_gateway_v2_waf_request_body_enforcement' is set to 'false'"
   type        = number
   default     = 128
+}
+
+variable "app_gateway_v2_waf_request_body_enforcement" {
+  description = "Should the firewall block a request with a body size greater than 'app_gateway_v2_waf_max_request_body_size_in_kb'"
+  type        = bool
+  default     = true
 }
