@@ -7,7 +7,7 @@ resource "azurerm_storage_account" "custom_error" {
   account_tier                  = "Standard"
   account_replication_type      = "LRS"
   min_tls_version               = "TLS1_2"
-  enable_https_traffic_only     = true
+  https_traffic_only_enabled    = true
   public_network_access_enabled = true
 
   static_website {}

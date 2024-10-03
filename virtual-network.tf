@@ -11,11 +11,10 @@ resource "azurerm_virtual_network" "default" {
 resource "azurerm_route_table" "default" {
   count = local.create_virtual_network ? 1 : 0
 
-  name                          = "${local.resource_prefix}default"
-  location                      = local.resource_group.location
-  resource_group_name           = local.resource_group.name
-  disable_bgp_route_propagation = false
-  tags                          = local.tags
+  name                = "${local.resource_prefix}default"
+  location            = local.resource_group.location
+  resource_group_name = local.resource_group.name
+  tags                = local.tags
 }
 
 resource "azurerm_subnet" "app_gateway_v2_subnet" {
