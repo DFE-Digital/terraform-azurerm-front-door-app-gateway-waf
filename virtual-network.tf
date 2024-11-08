@@ -20,7 +20,7 @@ resource "azurerm_route_table" "default" {
 resource "azurerm_subnet" "app_gateway_v2_subnet" {
   count = local.create_virtual_network && local.waf_application == "AppGatewayV2" ? 1 : 0
 
-  name                 = "${local.resource_prefix}app-gateway-v2"
+  name                 = "${local.resource_prefix}app-gatway-v2"
   virtual_network_name = local.virtual_network_name
   resource_group_name  = local.resource_group.name
   address_prefixes     = [local.app_gateway_v2_subnet_cidr]
