@@ -52,6 +52,7 @@ locals {
   }
   response_request_timeout    = var.response_request_timeout
   cdn_host_redirects          = var.cdn_host_redirects
+  cdn_url_path_redirects      = var.cdn_url_path_redirects
   cdn_add_response_headers    = var.cdn_add_response_headers
   cdn_remove_response_headers = var.cdn_remove_response_headers
 

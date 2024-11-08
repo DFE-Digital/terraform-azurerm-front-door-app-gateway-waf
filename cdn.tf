@@ -75,7 +75,8 @@ resource "azurerm_cdn_frontdoor_route" "waf" {
   cdn_frontdoor_rule_set_ids = flatten([
     lookup(azurerm_cdn_frontdoor_rule_set.origin_headers, each.key, "") != "" ? [azurerm_cdn_frontdoor_rule_set.origin_headers[each.key].id] : [],
     [azurerm_cdn_frontdoor_rule_set.global_headers[0].id],
-    length(local.cdn_host_redirects) > 0 ? azurerm_cdn_frontdoor_rule_set.redirects[0].id : []
+    length(local.cdn_host_redirects) > 0 ? [azurerm_cdn_frontdoor_rule_set.redirects[0].id] : [],
+    length(local.cdn_url_path_redirects) > 0 ? [azurerm_cdn_frontdoor_rule_set.url_path_redirects[0].id] : [],
   ])
 
   enabled                = true
@@ -103,6 +104,13 @@ resource "azurerm_cdn_frontdoor_rule_set" "redirects" {
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf[0].id
 }
 
+resource "azurerm_cdn_frontdoor_rule_set" "url_path_redirects" {
+  count = local.waf_application == "CDN" && length(local.cdn_url_path_redirects) > 0 ? 1 : 0
+
+  name                     = "${replace(local.resource_prefix, "-", "")}urlpathredirects"
+  cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.waf[0].id
+}
+
 resource "azurerm_cdn_frontdoor_rule" "redirect" {
   for_each = local.waf_application == "CDN" ? { for index, host_redirect in local.cdn_host_redirects : index => { "from" : host_redirect.from, "to" : host_redirect.to } } : {}
 
@@ -127,6 +135,48 @@ resource "azurerm_cdn_frontdoor_rule" "redirect" {
       negate_condition = false
       match_values     = [each.value.from]
       transforms       = ["Lowercase", "Trim"]
+    }
+  }
+}
+
+resource "azurerm_cdn_frontdoor_rule" "url_path_redirect" {
+  for_each = local.waf_application == "CDN" ? {
+    for index, host_redirect in local.cdn_url_path_redirects : index => {
+      redirect_type        = host_redirect.redirect_type,
+      redirect_protocol    = host_redirect.redirect_protocol
+      destination_path     = host_redirect.destination_path
+      destination_hostname = host_redirect.destination_hostname,
+      destination_fragment = host_redirect.destination_fragment,
+      query_string         = host_redirect.query_string,
+      operator             = host_redirect.operator,
+      match_values         = host_redirect.match_values,
+      transforms           = host_redirect.transforms
+    }
+  } : {}
+
+  depends_on = [azurerm_cdn_frontdoor_origin_group.waf, azurerm_cdn_frontdoor_origin.waf]
+
+  name                      = "urlredirect${each.key}"
+  cdn_frontdoor_rule_set_id = azurerm_cdn_frontdoor_rule_set.url_path_redirects[0].id
+  order                     = each.key
+  behavior_on_match         = "Continue"
+
+  actions {
+    url_redirect_action {
+      redirect_type        = each.value.redirect_type
+      redirect_protocol    = each.value.redirect_protocol
+      destination_hostname = each.value.destination_hostname
+      destination_path     = each.value.destination_path
+      destination_fragment = each.value.destination_fragment
+      query_string         = each.value.query_string
+    }
+  }
+
+  conditions {
+    url_path_condition {
+      operator     = each.value.operator
+      match_values = each.value.match_values
+      transforms   = each.value.transforms
     }
   }
 }

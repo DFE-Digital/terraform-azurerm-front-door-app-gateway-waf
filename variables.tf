@@ -182,6 +182,22 @@ variable "cdn_host_redirects" {
   default     = []
 }
 
+variable "cdn_url_path_redirects" {
+  description = "CDN FrontDoor url path redirects `[{ \"redirect_type\": \"PermanentRedirect\", \"destination_path\": \"/example\", \"destination_hostname\": \"www.example.uk\", \"operator\": \"Equals\", \"match_values\": [\"/example\"] }]`"
+  type = list(object({
+    redirect_type        = string
+    redirect_protocol    = optional(string, null)
+    destination_path     = optional(string, null)
+    destination_hostname = optional(string, null)
+    destination_fragment = optional(string, null)
+    query_string         = optional(string, null)
+    operator             = string
+    match_values         = optional(list(string), [])
+    transforms           = optional(list(string), [])
+  }))
+  default = []
+}
+
 variable "cdn_add_response_headers" {
   description = "List of response headers to add at the CDN Front Door for all endpoints `[{ \"Name\" = \"Strict-Transport-Security\", \"value\" = \"max-age=31536000\" }]`"
   type        = list(map(string))
