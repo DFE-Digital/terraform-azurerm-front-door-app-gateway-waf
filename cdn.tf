@@ -143,14 +143,14 @@ resource "azurerm_cdn_frontdoor_rule" "url_path_redirect" {
   for_each = local.waf_application == "CDN" ? {
     for index, host_redirect in local.cdn_url_path_redirects : index => {
       redirect_type        = host_redirect.redirect_type,
-      redirect_protocol    = lookup(host_redirect, "redirect_protocol", null),
-      destination_path     = lookup(host_redirect, "destination_path", null),
-      destination_hostname = lookup(host_redirect, "destination_hostname", null),
-      destination_fragment = lookup(host_redirect, "destination_fragment", null),
-      query_string         = lookup(host_redirect, "query_string", null),
+      redirect_protocol    = host_redirect.redirect_protocol
+      destination_path     = host_redirect.destination_path
+      destination_hostname = host_redirect.destination_hostname,
+      destination_fragment = host_redirect.destination_fragment,
+      query_string         = host_redirect.query_string,
       operator             = host_redirect.operator,
-      match_values         = lookup(host_redirect, "match_values", null),
-      transforms           = lookup(host_redirect, "transforms", null)
+      match_values         = host_redirect.match_values,
+      transforms           = host_redirect.transforms
     }
   } : {}
 

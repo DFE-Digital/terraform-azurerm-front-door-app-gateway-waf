@@ -186,14 +186,14 @@ variable "cdn_url_path_redirects" {
   description = "CDN FrontDoor url path redirects `[{ \"redirect_type\": \"PermanentRedirect\", \"destination_path\": \"/example\", \"destination_hostname\": \"www.example.uk\", \"operator\": \"Equals\", \"match_values\": [\"/example\"] }]`"
   type = list(object({
     redirect_type        = string
-    redirect_protocol    = optional(string)
-    destination_path     = optional(string)
-    destination_hostname = optional(string)
-    destination_fragment = optional(string)
-    query_string         = optional(string)
+    redirect_protocol    = optional(string, null)
+    destination_path     = optional(string, null)
+    destination_hostname = optional(string, null)
+    destination_fragment = optional(string, null)
+    query_string         = optional(string, null)
     operator             = string
-    match_values         = optional(list(string))
-    transforms           = optional(list(string))
+    match_values         = optional(list(string), [])
+    transforms           = optional(list(string), [])
   }))
   default = []
 }
