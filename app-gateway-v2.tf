@@ -105,6 +105,13 @@ resource "azurerm_application_gateway" "waf" {
     public_ip_address_id = azurerm_public_ip.app_gateway_v2[0].id
   }
 
+  frontend_ip_configuration {
+    name                          = "private-frontend"
+    private_ip_address_allocation = "Static"
+    private_ip_address            = local.app_gateway_v2_private_ip
+    subnet_id                     = azurerm_subnet.app_gateway_v2_subnet[0].id
+  }
+
   dynamic "backend_address_pool" {
     for_each = local.waf_targets
 
@@ -164,8 +171,8 @@ resource "azurerm_application_gateway" "waf" {
 
     content {
       name                           = http_listener.key
-      host_names                     = [http_listener.value["domain"]]
-      frontend_ip_configuration_name = "default-frontend"
+      host_name                      = http_listener.value["domain"]
+      frontend_ip_configuration_name = http_listener.value["app_gateway_v2_use_private_listener"] ? "private-frontend" : "default-frontend"
       frontend_port_name             = "http"
       protocol                       = "Http"
 

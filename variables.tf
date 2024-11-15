@@ -151,6 +151,7 @@ variable "waf_targets" {
       cdn_create_custom_domain : optional(bool, false),
       custom_fqdn : optional(string, "")
       app_gateway_v2_ssl_certificate_key_vault_id : optional(string, "")
+      app_gateway_v2_use_private_listener : optional(string, false)
       enable_health_probe : optional(bool, true),
       health_probe_interval : optional(number, 60),
       health_probe_request_type : optional(string, "HEAD"),
