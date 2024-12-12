@@ -208,18 +208,18 @@ module "azurerm_waf" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.6.1 |
-| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 1.9.0 |
-| <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | >= 2.39.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 3.51.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.9 |
+| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | ~> 1.13 |
+| <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 2.39 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azapi"></a> [azapi](#provider\_azapi) | 1.15.0 |
-| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 3.0.1 |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.3.0 |
+| <a name="provider_azapi"></a> [azapi](#provider\_azapi) | ~> 1.13 |
+| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 2.39 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.0 |
 
 ## Resources
 
