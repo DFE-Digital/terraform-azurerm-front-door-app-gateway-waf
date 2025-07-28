@@ -49,3 +49,10 @@ data "azapi_resource_action" "existing_logic_app_workflow_callback_url" {
 
   response_export_values = ["value"]
 }
+
+data "azurerm_virtual_network" "vnet" {
+  for_each = local.virtual_network_peering_targets
+
+  name                = each.value.name
+  resource_group_name = each.value.resource_group_name
+}

@@ -35,6 +35,12 @@ variable "virtual_network_address_space" {
   description = "Virtual Network address space CIDR"
   type        = string
   default     = "172.16.0.0/12"
+
+  validation {
+    # Ensures the VNet prefix is not smaller than a /28, leaving room for subnets.
+    condition     = tonumber(split("/", var.virtual_network_address_space)[1]) <= 28
+    error_message = "The VNet address space must be larger than a /28 to allow for subnetting."
+  }
 }
 
 variable "waf_application" {
@@ -152,6 +158,10 @@ variable "waf_targets" {
       custom_fqdn : optional(string, "")
       app_gateway_v2_ssl_certificate_key_vault_id : optional(string, "")
       app_gateway_v2_use_private_listener : optional(string, false)
+      vnet_peering_target : optional(object({
+        name : string,
+        resource_group_name : string
+      }))
       enable_health_probe : optional(bool, true),
       health_probe_interval : optional(number, 60),
       health_probe_request_type : optional(string, "HEAD"),
