@@ -283,6 +283,7 @@ module "azurerm_waf" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_app_gateway_v2_availability_zones"></a> [app\_gateway\_v2\_availability\_zones](#input\_app\_gateway\_v2\_availability\_zones) | List of Availability Zones in which the App Gateway should be located | `list(string)` | `[]` | no |
 | <a name="input_app_gateway_v2_capacity_units"></a> [app\_gateway\_v2\_capacity\_units](#input\_app\_gateway\_v2\_capacity\_units) | App Gateway V2 capacity units | `number` | `1` | no |
 | <a name="input_app_gateway_v2_cookie_based_affinity"></a> [app\_gateway\_v2\_cookie\_based\_affinity](#input\_app\_gateway\_v2\_cookie\_based\_affinity) | App Gateway V2 Cookie Based Affinity. Sets an affinity cookie in the response with a hash value which contains the session details, so that the subsequent requests carrying the affinity cookie will be routed to the same backend server for maintaining stickiness. | `string` | `"Disabled"` | no |
 | <a name="input_app_gateway_v2_custom_error_configuration"></a> [app\_gateway\_v2\_custom\_error\_configuration](#input\_app\_gateway\_v2\_custom\_error\_configuration) | A map of Status Codes to HTML URLs | `map(string)` | `{}` | no |
