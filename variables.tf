@@ -71,6 +71,12 @@ variable "app_gateway_v2_frontend_port" {
   default     = 80
 }
 
+variable "app_gateway_v2_enable_private_link" {
+  description = "Enable Private Link service for App Gateway V2"
+  type        = bool
+  default     = false
+}
+
 variable "app_gateway_v2_cookie_based_affinity" {
   description = "App Gateway V2 Cookie Based Affinity. Sets an affinity cookie in the response with a hash value which contains the session details, so that the subsequent requests carrying the affinity cookie will be routed to the same backend server for maintaining stickiness."
   type        = string

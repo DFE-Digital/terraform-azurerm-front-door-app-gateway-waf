@@ -30,6 +30,20 @@ resource "azurerm_subnet" "app_gateway_v2_subnet" {
   ]
 }
 
+resource "azurerm_subnet" "app_gateway_v2_subnet_private_link" {
+  count = local.create_virtual_network && local.waf_application == "AppGatewayV2" && local.app_gateway_v2_enable_private_link ? 1 : 0
+
+  name                                          = "${local.resource_prefix}app-gateway-v2-pl"
+  virtual_network_name                          = local.virtual_network_name
+  resource_group_name                           = local.resource_group.name
+  address_prefixes                              = [local.app_gateway_v2_private_link_subnet_cidr]
+  private_link_service_network_policies_enabled = false
+
+  depends_on = [
+    azurerm_virtual_network.default[0]
+  ]
+}
+
 resource "azurerm_subnet_route_table_association" "app_gateway_v2_subnet" {
   count = local.create_virtual_network && local.waf_application == "AppGatewayV2" ? 1 : 0
 
