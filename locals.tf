@@ -13,8 +13,11 @@ locals {
   virtual_network_address_space = var.virtual_network_address_space
   virtual_network_address_space_mask = element(split("/", local.virtual_network_address_space
   ), 1)
-  app_gateway_v2_subnet_cidr  = cidrsubnet(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask, 0)
-  app_gateway_v2_private_ip   = cidrhost(local.virtual_network_address_space, 23 - local.virtual_network_address_space_mask)
+  virtual_network_peering_targets = {
+    for key, target in var.waf_targets : key => target.vnet_peering_target if target.vnet_peering_target != null && local.create_virtual_network
+  }
+  app_gateway_v2_subnet_cidr  = cidrsubnet(local.virtual_network_address_space, 4, 0)
+  app_gateway_v2_private_ip   = cidrhost(local.virtual_network_address_space, 32 - local.virtual_network_address_space_mask)
   app_gateway_v2_enable_http2 = var.app_gateway_v2_enable_http2
 
   app_gateway_v2_capacity_units                                           = var.app_gateway_v2_capacity_units
