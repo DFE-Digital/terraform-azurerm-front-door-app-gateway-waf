@@ -351,6 +351,12 @@ variable "app_gateway_v2_waf_managed_rulesets_exclusions" {
   default = {}
 }
 
+variable "app_gateway_v2_availability_zones" {
+  description = "List of Availability Zones in which the App Gateway should be located"
+  type        = list(string)
+  default     = []
+}
+
 variable "waf_custom_rules" {
   description = "Map of all Custom rules you want to apply to the WAF"
   type = map(object({

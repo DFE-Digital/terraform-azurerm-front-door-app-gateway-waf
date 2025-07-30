@@ -81,8 +81,8 @@ resource "azurerm_application_gateway" "waf" {
   name                = "${local.resource_prefix}-waf"
   resource_group_name = local.resource_group.name
   location            = local.resource_group.location
-
-  enable_http2 = local.app_gateway_v2_enable_http2
+  zones               = local.app_gateway_v2_availability_zones
+  enable_http2        = local.app_gateway_v2_enable_http2
 
   sku {
     name     = "WAF_v2"
