@@ -17,6 +17,8 @@ locals {
     for key, target in var.waf_targets : key => target.vnet_peering_target if target.vnet_peering_target != null && local.create_virtual_network
   }
   app_gateway_v2_subnet_cidr                                              = cidrsubnet(local.virtual_network_address_space, 4, 0)
+  app_gateway_v2_enable_private_link                                      = var.app_gateway_v2_enable_private_link
+  app_gateway_v2_private_link_subnet_cidr                                 = cidrsubnet(local.virtual_network_address_space, 4, 2)
   app_gateway_v2_private_ip                                               = cidrhost(local.virtual_network_address_space, 32 - local.virtual_network_address_space_mask)
   app_gateway_v2_enable_http2                                             = var.app_gateway_v2_enable_http2
   app_gateway_v2_availability_zones                                       = var.app_gateway_v2_availability_zones

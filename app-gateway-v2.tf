@@ -101,8 +101,9 @@ resource "azurerm_application_gateway" "waf" {
   }
 
   frontend_ip_configuration {
-    name                 = "default-frontend"
-    public_ip_address_id = azurerm_public_ip.app_gateway_v2[0].id
+    name                            = "default-frontend"
+    public_ip_address_id            = azurerm_public_ip.app_gateway_v2[0].id
+    private_link_configuration_name = local.app_gateway_v2_enable_private_link ? "${local.resource_prefix}-waf" : null
   }
 
   frontend_ip_configuration {
@@ -197,6 +198,21 @@ resource "azurerm_application_gateway" "waf" {
       backend_address_pool_name  = request_routing_rule.key
       backend_http_settings_name = request_routing_rule.key
       priority                   = index(keys(local.waf_targets), request_routing_rule.key) + 1
+    }
+  }
+
+  dynamic "private_link_configuration" {
+    for_each = local.app_gateway_v2_enable_private_link ? [1] : []
+
+    content {
+      name = "${local.resource_prefix}-waf"
+
+      ip_configuration {
+        name                          = "default-frontend"
+        subnet_id                     = azurerm_subnet.app_gateway_v2_subnet_private_link[0].id
+        private_ip_address_allocation = "Dynamic"
+        primary                       = true
+      }
     }
   }
 

@@ -264,6 +264,7 @@ module "azurerm_waf" {
 | [azurerm_storage_account.custom_error](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 | [azurerm_storage_blob.custom_error_web_pages](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_blob) | resource |
 | [azurerm_subnet.app_gateway_v2_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
+| [azurerm_subnet.app_gateway_v2_subnet_private_link](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_subnet_network_security_group_association.app_gateway_v2_allow_frontdoor_inbound_only](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_network_security_group_association) | resource |
 | [azurerm_subnet_route_table_association.app_gateway_v2_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_route_table_association) | resource |
 | [azurerm_user_assigned_identity.app_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
@@ -288,6 +289,7 @@ module "azurerm_waf" {
 | <a name="input_app_gateway_v2_cookie_based_affinity"></a> [app\_gateway\_v2\_cookie\_based\_affinity](#input\_app\_gateway\_v2\_cookie\_based\_affinity) | App Gateway V2 Cookie Based Affinity. Sets an affinity cookie in the response with a hash value which contains the session details, so that the subsequent requests carrying the affinity cookie will be routed to the same backend server for maintaining stickiness. | `string` | `"Disabled"` | no |
 | <a name="input_app_gateway_v2_custom_error_configuration"></a> [app\_gateway\_v2\_custom\_error\_configuration](#input\_app\_gateway\_v2\_custom\_error\_configuration) | A map of Status Codes to HTML URLs | `map(string)` | `{}` | no |
 | <a name="input_app_gateway_v2_enable_http2"></a> [app\_gateway\_v2\_enable\_http2](#input\_app\_gateway\_v2\_enable\_http2) | App Gateway V2 enable HTTP2 | `bool` | `true` | no |
+| <a name="input_app_gateway_v2_enable_private_link"></a> [app\_gateway\_v2\_enable\_private\_link](#input\_app\_gateway\_v2\_enable\_private\_link) | Enable Private Link service for App Gateway V2 | `bool` | `false` | no |
 | <a name="input_app_gateway_v2_frontend_port"></a> [app\_gateway\_v2\_frontend\_port](#input\_app\_gateway\_v2\_frontend\_port) | App Gateway V2 frontend port | `number` | `80` | no |
 | <a name="input_app_gateway_v2_identity_ids"></a> [app\_gateway\_v2\_identity\_ids](#input\_app\_gateway\_v2\_identity\_ids) | App Gateway V2 User Assigned identity ids. If empty, one will be created. | `list(any)` | `[]` | no |
 | <a name="input_app_gateway_v2_waf_file_upload_limit_in_mb"></a> [app\_gateway\_v2\_waf\_file\_upload\_limit\_in\_mb](#input\_app\_gateway\_v2\_waf\_file\_upload\_limit\_in\_mb) | Maximum file size permitted in MB | `number` | `100` | no |
