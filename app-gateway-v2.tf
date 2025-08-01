@@ -143,13 +143,14 @@ resource "azurerm_application_gateway" "waf" {
     for_each = local.waf_targets
 
     content {
-      name                  = backend_http_settings.key
-      cookie_based_affinity = local.app_gateway_v2_cookie_based_affinity
-      path                  = "/"
-      port                  = 443
-      protocol              = "Https"
-      request_timeout       = local.response_request_timeout
-      probe_name            = backend_http_settings.key
+      name                                = backend_http_settings.key
+      cookie_based_affinity               = local.app_gateway_v2_cookie_based_affinity
+      path                                = "/"
+      port                                = 443
+      protocol                            = "Https"
+      request_timeout                     = local.response_request_timeout
+      pick_host_name_from_backend_address = backend_http_settings.app_gateway_v2_use_backend_hostname
+      probe_name                          = backend_http_settings.key
     }
   }
 

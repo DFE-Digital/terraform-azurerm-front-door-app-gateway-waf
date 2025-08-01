@@ -164,6 +164,7 @@ variable "waf_targets" {
       custom_fqdn : optional(string, "")
       app_gateway_v2_ssl_certificate_key_vault_id : optional(string, "")
       app_gateway_v2_use_private_listener : optional(string, false)
+      app_gateway_v2_use_backend_hostname : optional(bool, false)
       vnet_peering_target : optional(object({
         name : string,
         resource_group_name : string
