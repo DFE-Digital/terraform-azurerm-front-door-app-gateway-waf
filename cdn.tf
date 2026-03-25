@@ -39,6 +39,16 @@ resource "azurerm_cdn_frontdoor_origin" "waf" {
   origin_host_header             = each.value.domain
   http_port                      = 80
   https_port                     = 443
+
+  dynamic "private_link" {
+    for_each = lookup(each.value, "create_private", false) ? [1] : []
+
+    content {
+      private_link_target_id = each.value.private_link_target_id
+      location               = each.value.private_link_location
+      target_type            = lookup(each.value, "private_link_target_type", "managedEnvironments")
+    }
+  }
 }
 
 resource "azurerm_cdn_frontdoor_endpoint" "waf" {
