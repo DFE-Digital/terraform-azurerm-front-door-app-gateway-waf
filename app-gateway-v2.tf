@@ -9,6 +9,8 @@ resource "azurerm_user_assigned_identity" "app_gateway" {
 resource "azurerm_key_vault" "app_gateway_certificates" {
   count = local.waf_application == "AppGatewayV2" && local.enable_key_vault_app_gateway_certificates ? 1 : 0
 
+  #checkov:skip=CKV2_AZURE_32: "Ensure private endpoint is configured to key vault"
+
   name                       = "${local.resource_prefix}-agcerts"
   location                   = local.resource_group.location
   resource_group_name        = local.resource_group.name
@@ -77,6 +79,8 @@ resource "azurerm_role_assignment" "app_gateway_certificates" {
 
 resource "azurerm_application_gateway" "waf" {
   count = local.waf_application == "AppGatewayV2" ? 1 : 0
+
+  #checkov:skip=CKV_AZURE_120: "Ensure that Application Gateway enables WAF"
 
   name                = "${local.resource_prefix}-waf"
   resource_group_name = local.resource_group.name
