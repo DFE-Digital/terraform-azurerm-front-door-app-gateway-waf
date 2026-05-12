@@ -189,9 +189,30 @@ variable "waf_targets" {
         error_page_directory : string,
         error_pages : map(string)
       }), null)
+      # Private Link additions
+      create_private : optional(bool, false)
+      private_link_target_id : optional(string)
+      private_link_location  : optional(string)
+      private_link_target_type : optional(string, "managedEnvironments")
     })
   )
   default = {}
+
+  #private link validation
+  validation {
+    condition = alltrue([
+      for k, v in var.waf_targets :
+      (
+        !try(v.create_private, false) ||
+        (
+          try(v.private_link_target_id, null) != null &&
+          try(v.private_link_location, null) != null
+        )
+      )
+    ])
+
+    error_message = "When create_private is true, private_link_target_id and private_link_location must be provided."
+  }
 }
 
 variable "cdn_host_redirects" {
