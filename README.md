@@ -207,7 +207,7 @@ module "azurerm_waf" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.9 |
 | <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | ~> 1.13 |
 | <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | ~> 2.39 |
@@ -216,15 +216,15 @@ module "azurerm_waf" {
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_azapi"></a> [azapi](#provider\_azapi) | ~> 1.13 |
-| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 2.39 |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.0 |
+| ---- | ------- |
+| <a name="provider_azapi"></a> [azapi](#provider\_azapi) | 1.15.0 |
+| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | 2.53.1 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.72.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azapi_update_resource.container_app_storage_key_rotation_reminder](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) | resource |
 | [azurerm_application_gateway.waf](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_gateway) | resource |
 | [azurerm_cdn_frontdoor_custom_domain.waf](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cdn_frontdoor_custom_domain) | resource |
@@ -283,7 +283,7 @@ module "azurerm_waf" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_app_gateway_v2_availability_zones"></a> [app\_gateway\_v2\_availability\_zones](#input\_app\_gateway\_v2\_availability\_zones) | List of Availability Zones in which the App Gateway should be located | `list(string)` | `[]` | no |
 | <a name="input_app_gateway_v2_capacity_units"></a> [app\_gateway\_v2\_capacity\_units](#input\_app\_gateway\_v2\_capacity\_units) | App Gateway V2 capacity units | `number` | `1` | no |
 | <a name="input_app_gateway_v2_cookie_based_affinity"></a> [app\_gateway\_v2\_cookie\_based\_affinity](#input\_app\_gateway\_v2\_cookie\_based\_affinity) | App Gateway V2 Cookie Based Affinity. Sets an affinity cookie in the response with a hash value which contains the session details, so that the subsequent requests carrying the affinity cookie will be routed to the same backend server for maintaining stickiness. | `string` | `"Disabled"` | no |
@@ -341,7 +341,7 @@ module "azurerm_waf" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_custom_error_web_page_storage_accounts"></a> [custom\_error\_web\_page\_storage\_accounts](#output\_custom\_error\_web\_page\_storage\_accounts) | Storage Accounts used for holding custom error pages |
 | <a name="output_environment"></a> [environment](#output\_environment) | n/a |
 <!-- END_TF_DOCS -->
