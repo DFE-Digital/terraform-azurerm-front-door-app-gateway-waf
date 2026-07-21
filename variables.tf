@@ -433,3 +433,9 @@ variable "app_gateway_v2_waf_request_body_enforcement" {
   type        = bool
   default     = true
 }
+
+variable "ssl_policy" {
+  description = "The SSL policy to be used by the waf"
+  type        = string
+  default     = "AppGwSslPolicy20220101"
+}
